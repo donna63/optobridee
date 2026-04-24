@@ -19,6 +19,8 @@
   <!-- PWA manifest (keep your own) -->
 
   <link rel="manifest" href="manifest.json">
+  <!-- Add Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     /* ===== PRELOADER ANIMATION ===== */
@@ -792,313 +794,352 @@
 </div> <!-- End of main-content -->
 
 <script>
-  // ===== PRELOADER ANIMATION =====
-  document.addEventListener('DOMContentLoaded', function() {
-    const preloader = document.getElementById('preloader');
-    const mainContent = document.getElementById('main-content');
-    
-    // After 3.5 seconds (6 blinks + fade out), hide preloader and show main content
+
+// ===== SUPABASE CONFIGURATION =====
+const SUPABASE_URL = "https://thiksscedkfmqcpatedq.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaWtzc2NlZGtmbXFjcGF0ZWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNDc2NzYsImV4cCI6MjA5MjYyMzY3Nn0.zI5_7tWfdoNG700HOyK4eDrCMiITD9MXyqtMTImNJKA";
+
+const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ===== CREATE WAITLIST TABLE IF NOT EXISTS (Run this once in Supabase SQL) =====
+// Run this SQL in Supabase SQL Editor:
+/*
+CREATE TABLE IF NOT EXISTS waitlist (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  phone TEXT NOT NULL,
+  referral_code_used TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+*/
+
+// ===== PRELOADER ANIMATION =====
+document.addEventListener('DOMContentLoaded', function() {
+  const preloader = document.getElementById('preloader');
+  const mainContent = document.getElementById('main-content');
+  
+  setTimeout(function() {
+    preloader.classList.add('fade-out');
     setTimeout(function() {
-      // Add fade-out class to preloader
-      preloader.classList.add('fade-out');
-      
-      // Show main content after a brief delay
+      mainContent.classList.remove('hidden');
+      mainContent.classList.add('show');
       setTimeout(function() {
-        mainContent.classList.remove('hidden');
-        mainContent.classList.add('show');
-        
-        // Remove preloader from DOM after animation completes
-        setTimeout(function() {
-          preloader.remove();
-        }, 800);
-      }, 300);
-    }, 3500); // Total animation time: 3 seconds for 6 blinks + 0.5s buffer
-  });
-
-  // ===== MOBILE DRAWER =====
-  const openMobile = document.getElementById('openMobile');
-  const closeMobile = document.getElementById('closeMobile');
-  const sidebar = document.querySelector('.mobile-sidebar');
-  const overlay = document.querySelector('.mobile-sidebar-overlay');
-
-  function openDrawer() {
-    sidebar.classList.add('active');
-    overlay.classList.add('active');
-  }
-  
-  function closeDrawer() {
-    sidebar.classList.remove('active');
-    overlay.classList.remove('active');
-  }
-
-  if (openMobile) openMobile.addEventListener('click', openDrawer);
-  if (closeMobile) closeMobile.addEventListener('click', closeDrawer);
-  if (overlay) overlay.addEventListener('click', closeDrawer);
-
-  // ===== SIGN-UP POPUP =====
-  const signupHeader = document.getElementById('signupHeader');
-  const signupMobile = document.getElementById('signupMobile');
-  const popup = document.getElementById('signupPopup');
-  const closePopup = document.getElementById('closePopup');
-
-  function openSignupPopup(e) {
-    e.preventDefault();
-    if (popup) {
-      popup.classList.remove('hidden');
-      popup.classList.add('flex');
-    }
-  }
-
-  function closeSignupPopup() {
-    if (popup) {
-      popup.classList.add('hidden');
-      popup.classList.remove('flex');
-    }
-  }
-
-  if (signupHeader) signupHeader.addEventListener('click', openSignupPopup);
-  if (signupMobile) signupMobile.addEventListener('click', openSignupPopup);
-  
-  if (closePopup) closePopup.addEventListener('click', closeSignupPopup);
-  if (popup) popup.addEventListener('click', function(e) {
-    if (e.target === popup) closeSignupPopup();
-  });
-
-  // ===== FAQ TOGGLE =====
-  document.querySelectorAll('.faq-question').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const answer = btn.nextElementSibling;
-      const icon = btn.querySelector('i');
-      if (answer) answer.classList.toggle('hidden');
-      if (icon) {
-        icon.classList.toggle('fa-plus');
-        icon.classList.toggle('fa-minus');
-      }
-    });
-  });
-
-  // ===== SCROLL ANIMATIONS =====
-  const scrollEls = document.querySelectorAll('.scroll-animate');
-  const inView = (el, dividend = 1.25) => el.getBoundingClientRect().top <= window.innerHeight / dividend;
-  const display = el => el.classList.add('animated');
-
-  const handleScroll = () => scrollEls.forEach(el => { if (inView(el)) display(el); });
-  window.addEventListener('scroll', handleScroll);
-  
-  // Start scroll animations after preloader is done
-  setTimeout(() => {
-    handleScroll();
+        preloader.remove();
+      }, 800);
+    }, 300);
   }, 3500);
+});
 
-  // ===== LUCIDE ICONS =====
-  if (typeof lucide !== 'undefined') {
-    lucide.createIcons();
+// ===== MOBILE DRAWER =====
+const openMobile = document.getElementById('openMobile');
+const closeMobile = document.getElementById('closeMobile');
+const sidebar = document.querySelector('.mobile-sidebar');
+const overlay = document.querySelector('.mobile-sidebar-overlay');
+
+function openDrawer() {
+  sidebar.classList.add('active');
+  overlay.classList.add('active');
+}
+
+function closeDrawer() {
+  sidebar.classList.remove('active');
+  overlay.classList.remove('active');
+}
+
+if (openMobile) openMobile.addEventListener('click', openDrawer);
+if (closeMobile) closeMobile.addEventListener('click', closeDrawer);
+if (overlay) overlay.addEventListener('click', closeDrawer);
+
+// ===== FAQ TOGGLE =====
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const answer = btn.nextElementSibling;
+    const icon = btn.querySelector('i');
+    if (answer) answer.classList.toggle('hidden');
+    if (icon) {
+      icon.classList.toggle('fa-plus');
+      icon.classList.toggle('fa-minus');
+    }
+  });
+});
+
+// ===== SCROLL ANIMATIONS =====
+const scrollEls = document.querySelectorAll('.scroll-animate');
+const inView = (el, dividend = 1.25) => el.getBoundingClientRect().top <= window.innerHeight / dividend;
+const display = el => el.classList.add('animated');
+
+const handleScroll = () => scrollEls.forEach(el => { if (inView(el)) display(el); });
+window.addEventListener('scroll', handleScroll);
+
+setTimeout(() => {
+  handleScroll();
+}, 3500);
+
+// ===== LUCIDE ICONS =====
+if (typeof lucide !== 'undefined') {
+  lucide.createIcons();
+}
+
+// ===== WAITLIST FUNCTIONALITY WITH SUPABASE =====
+console.log('=== WAITLIST INITIALIZATION ===');
+
+const waitlistBtn = document.getElementById('waitlistBtn');
+const waitlistModal = document.getElementById('waitlistModal');
+const closeWaitlist = document.getElementById('closeWaitlist');
+const waitlistForm = document.getElementById('waitlistForm');
+const waitlistSuccess = document.getElementById('waitlistSuccess');
+const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+const waitlistMobileBtn = document.querySelector('.waitlist-mobile-btn');
+
+// Check URL for referral code and auto-fill
+function autoFillReferralFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref');
+  if (refCode) {
+    const referralInput = document.getElementById('refferral');
+    if (referralInput) {
+      referralInput.value = refCode;
+      console.log('Auto-filled referral code:', refCode);
+    }
   }
+}
 
-  // ===== WAITLIST FUNCTIONALITY =====
-  console.log('=== WAITLIST INITIALIZATION ===');
+// Function to update referrer stats in Supabase
+async function updateReferrerStats(referralCode) {
+  if (!referralCode) return false;
   
-  const waitlistBtn = document.getElementById('waitlistBtn');
-  const waitlistModal = document.getElementById('waitlistModal');
-  const closeWaitlist = document.getElementById('closeWaitlist');
-  const waitlistForm = document.getElementById('waitlistForm');
-  const waitlistSuccess = document.getElementById('waitlistSuccess');
-  const closeSuccessBtn = document.getElementById('closeSuccessBtn');
-  
-  // Mobile waitlist button
-  const waitlistMobileBtn = document.querySelector('.waitlist-mobile-btn');
-
-  // Function to open waitlist modal
-  function openWaitlistModal(e) {
-    if (e) e.preventDefault();
-    console.log('Opening waitlist modal');
+  try {
+    // Get current referrer data
+    const { data: referrer, error: fetchError } = await _supabase
+      .from('referrers')
+      .select('*')
+      .eq('referral_code', referralCode.toUpperCase())
+      .single();
     
-    if (waitlistModal) {
-      // Reset form state first
-      resetWaitlistForm();
-      
-      // Close mobile drawer if open
-      closeDrawer();
-      
-      // Show modal
-      waitlistModal.classList.remove('hidden');
-      waitlistModal.classList.add('flex');
-      
-      // Force focus to first input
-      setTimeout(() => {
-        const nameInput = document.getElementById('name');
-        if (nameInput) nameInput.focus();
-      }, 100);
-    } else {
-      console.error('Waitlist modal not found!');
+    if (fetchError || !referrer) {
+      console.log('Referral code not found:', referralCode);
+      return false;
     }
-  }
-
-  // Function to close waitlist modal
-  function closeWaitlistModal() {
-    console.log('Closing waitlist modal');
-    if (waitlistModal) {
-      waitlistModal.classList.add('hidden');
-      waitlistModal.classList.remove('flex');
-      resetWaitlistForm();
+    
+    // Update referrer's stats (+1 referral, +₦200)
+    const newCount = (referrer.referral_count || 0) + 1;
+    const newEarnings = (referrer.earnings || 0) + 200;
+    
+    const { error: updateError } = await _supabase
+      .from('referrers')
+      .update({
+        referral_count: newCount,
+        earnings: newEarnings
+      })
+      .eq('referral_code', referralCode.toUpperCase());
+    
+    if (updateError) {
+      console.error('Error updating referrer:', updateError);
+      return false;
     }
+    
+    console.log(`✅ Referrer ${referralCode} updated: +1 referral, +₦200`);
+    return true;
+  } catch (error) {
+    console.error('Error in updateReferrerStats:', error);
+    return false;
   }
+}
 
-  // Function to reset the waitlist form
-  function resetWaitlistForm() {
-    if (waitlistForm) {
-      waitlistForm.reset();
-      waitlistForm.classList.remove('hidden');
+// Function to save waitlist entry to Supabase
+async function saveWaitlistToSupabase(name, email, phone, referralCode) {
+  try {
+    const { data, error } = await _supabase
+      .from('waitlist')
+      .insert([{
+        name: name,
+        email: email,
+        phone: phone,
+        referral_code_used: referralCode || null
+      }])
+      .select();
+    
+    if (error) {
+      console.error('Supabase insert error:', error);
+      return false;
     }
-    if (waitlistSuccess) {
-      waitlistSuccess.classList.add('hidden');
-    }
+    
+    console.log('Waitlist entry saved to Supabase:', data);
+    return true;
+  } catch (error) {
+    console.error('Error saving to Supabase:', error);
+    return false;
   }
+}
 
-  // Event listeners for opening modal
-  if (waitlistBtn) {
-    console.log('Main waitlist button found');
-    waitlistBtn.addEventListener('click', openWaitlistModal);
-  } else {
-    console.error('Main waitlist button not found!');
-  }
-
-  if (waitlistMobileBtn) {
-    console.log('Mobile waitlist button found');
-    waitlistMobileBtn.addEventListener('click', openWaitlistModal);
-  } else {
-    console.error('Mobile waitlist button not found!');
-  }
-
-  // Event listener for closing modal
-  if (closeWaitlist) {
-    closeWaitlist.addEventListener('click', closeWaitlistModal);
-  }
-
-  // Close modal when clicking outside
-  if (waitlistModal) {
-    waitlistModal.addEventListener('click', function(e) {
-      if (e.target === waitlistModal) {
-        closeWaitlistModal();
-      }
-    });
-  }
-
-    // ===== EMAILJS INITIALIZATION =====
-  // Initialize EmailJS with your Public Key
-  // REPLACE THIS WITH YOUR ACTUAL PUBLIC KEY FROM EMAILJS
-  emailjs.init("kStvIXBSAp4wltPWq");
-
-  // Handle form submission WITH EMAILJS
-  if (waitlistForm) {
-    waitlistForm.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      console.log('Form submitted - sending email notification');
-      
-      const name = document.getElementById('name')?.value.trim();
-      const email = document.getElementById('email')?.value.trim();
-      const phone = document.getElementById('phone')?.value.trim();
-      
-      // Validation
-      if (!name || !email || !phone) {
-        alert('Please fill in all fields');
-        return;
-      }
-      
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address');
-        return;
-      }
-      
-      // Show loading state
-      const submitBtn = waitlistForm.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
-      submitBtn.disabled = true;
-      
-      try {
-        // Save to localStorage first
-        localStorage.setItem('optob_waitlist', JSON.stringify({
-          name: name,
-          email: email,
-          phone: phone,
-          date: new Date().toISOString()
-        }));
-        console.log('Waitlist data saved to localStorage');
-        
-        // ===== SEND EMAIL USING EMAILJS =====
-        // REPLACE THESE WITH YOUR ACTUAL IDs FROM EMAILJS
-        const serviceID = 'service_x0bcosf';
-        const templateID = 'template_humkfbk';
-        
-        // Prepare email data
-        const templateParams = {
-          to_name: 'Optob Team',
-          from_name: name,
-          from_email: email,
-          phone: phone,
-          date: new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          }),
-          time: new Date().toLocaleTimeString('en-US')
-        };
-        
-        console.log('Sending email with data:', templateParams);
-        
-        // Send the email
-        const emailResponse = await emailjs.send(serviceID, templateID, templateParams);
-        console.log('Email sent successfully!', emailResponse);
-        
-        // Show success message
-        waitlistForm.classList.add('hidden');
-        if (waitlistSuccess) {
-          waitlistSuccess.classList.remove('hidden');
-        }
-        
-      } catch (error) {
-        console.error('Failed to send email:', error);
-        
-        // Still show success to user (email failure shouldn't block them)
-        alert('Thanks for joining! There was a minor issue sending the notification, but you\'re added to our list.');
-        
-        waitlistForm.classList.add('hidden');
-        if (waitlistSuccess) {
-          waitlistSuccess.classList.remove('hidden');
-        }
-      } finally {
-        // Reset button state
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-      }
-    });
-  }
+function openWaitlistModal(e) {
+  if (e) e.preventDefault();
+  console.log('Opening waitlist modal');
   
-  // Close success message
-  if (closeSuccessBtn) {
-    closeSuccessBtn.addEventListener('click', closeWaitlistModal);
+  if (waitlistModal) {
+    resetWaitlistForm();
+    closeDrawer();
+    waitlistModal.classList.remove('hidden');
+    waitlistModal.classList.add('flex');
+    
+    // Auto-fill referral code from URL
+    autoFillReferralFromURL();
+    
+    setTimeout(() => {
+      const nameInput = document.getElementById('name');
+      if (nameInput) nameInput.focus();
+    }, 100);
   }
+}
 
-  // Optional: Send data to server function
-  // function sendWaitlistDataToServer(name, email, phone) {
-  //   fetch('https://your-api-endpoint.com/waitlist', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({ name, email, phone })
-  //   })
-  //   .then(response => response.json())
-  //   .then(data => console.log('Server response:', data))
-  //   .catch(error => console.error('Error sending to server:', error));
-  // }
+function closeWaitlistModal() {
+  console.log('Closing waitlist modal');
+  if (waitlistModal) {
+    waitlistModal.classList.add('hidden');
+    waitlistModal.classList.remove('flex');
+    resetWaitlistForm();
+  }
+}
 
-  console.log('=== WAITLIST INITIALIZATION COMPLETE ===');
+function resetWaitlistForm() {
+  if (waitlistForm) {
+    waitlistForm.reset();
+    waitlistForm.classList.remove('hidden');
+  }
+  if (waitlistSuccess) {
+    waitlistSuccess.classList.add('hidden');
+  }
+}
 
+// Event listeners for opening modal
+if (waitlistBtn) {
+  waitlistBtn.addEventListener('click', openWaitlistModal);
+}
+
+if (waitlistMobileBtn) {
+  waitlistMobileBtn.addEventListener('click', openWaitlistModal);
+}
+
+if (closeWaitlist) {
+  closeWaitlist.addEventListener('click', closeWaitlistModal);
+}
+
+if (waitlistModal) {
+  waitlistModal.addEventListener('click', function(e) {
+    if (e.target === waitlistModal) {
+      closeWaitlistModal();
+    }
+  });
+}
+
+// ===== EMAILJS INITIALIZATION =====
+emailjs.init("kStvIXBSAp4wltPWq");
+
+// ===== HANDLE FORM SUBMISSION WITH SUPABASE + EMAILJS =====
+if (waitlistForm) {
+  waitlistForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    console.log('Form submitted - processing with Supabase');
+    
+    const name = document.getElementById('name')?.value.trim();
+    const email = document.getElementById('email')?.value.trim();
+    const phone = document.getElementById('phone')?.value.trim();
+    const referralCode = document.getElementById('refferral')?.value.trim().toUpperCase();
+    
+    if (!name || !email || !phone) {
+      alert('Please fill in all fields');
+      return;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+    
+    const submitBtn = waitlistForm.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+    submitBtn.disabled = true;
+    
+    try {
+      // Step 1: Save to Supabase waitlist table
+      const saved = await saveWaitlistToSupabase(name, email, phone, referralCode);
+      
+      if (!saved) {
+        console.warn('Could not save to Supabase, but continuing...');
+      }
+      
+      // Step 2: If referral code provided, update referrer stats
+      if (referralCode) {
+        const updated = await updateReferrerStats(referralCode);
+        if (updated) {
+          console.log('Referrer stats updated successfully!');
+        } else {
+          console.log('Referral code not valid or error updating');
+        }
+      }
+      
+      // Step 3: Save to localStorage as backup
+      localStorage.setItem('optob_waitlist', JSON.stringify({
+        name: name,
+        email: email,
+        phone: phone,
+        referral_code: referralCode,
+        date: new Date().toISOString()
+      }));
+      
+      // Step 4: Send email via EmailJS
+      const serviceID = 'service_x0bcosf';
+      const templateID = 'template_humkfbk';
+      
+      const templateParams = {
+        to_name: 'Optob Team',
+        from_name: name,
+        from_email: email,
+        phone: phone,
+        referral_code: referralCode || 'None',
+        date: new Date().toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }),
+        time: new Date().toLocaleTimeString('en-US')
+      };
+      
+      await emailjs.send(serviceID, templateID, templateParams);
+      console.log('Email sent successfully!');
+      
+      // Show success message
+      waitlistForm.classList.add('hidden');
+      if (waitlistSuccess) {
+        waitlistSuccess.classList.remove('hidden');
+      }
+      
+    } catch (error) {
+      console.error('Error in form submission:', error);
+      alert('Thanks for joining! There was a minor issue, but you\'ve been added to our list.');
+      waitlistForm.classList.add('hidden');
+      if (waitlistSuccess) {
+        waitlistSuccess.classList.remove('hidden');
+      }
+    } finally {
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+if (closeSuccessBtn) {
+  closeSuccessBtn.addEventListener('click', closeWaitlistModal);
+}
+
+// Auto-fill referral code from URL when page loads
+autoFillReferralFromURL();
+
+console.log('=== WAITLIST INITIALIZATION COMPLETE ===');
 </script>
 </body>
 </html>

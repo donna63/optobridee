@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OptobRide - My Referral Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <div class="container mx-auto px-4 py-8 max-w-2xl">
+    
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-3 bg-white shadow-sm rounded-full px-6 py-2">
+        <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center text-white font-bold">OR</div>
+        <h1 class="text-2xl font-bold text-gray-800">Optob<span class="text-orange-500">Ride</span></h1>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div class="bg-gradient-to-r from-orange-500 to-red-600 px-6 py-4 flex justify-between items-center">
+        <h2 class="text-xl font-bold text-white"><i class="fas fa-chart-line mr-2"></i> My Referral Dashboard</h2>
+        <button id="logoutBtn" class="bg-white/20 hover:bg-white/30 text-white px-4 py-1.5 rounded-lg text-sm transition">
+          <i class="fas fa-sign-out-alt mr-1"></i> Logout
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="text-center mb-6">
+          <p class="text-gray-500">Welcome back,</p>
+          <p id="dashboardName" class="text-2xl font-bold text-orange-600"></p>
+        </div>
+
+        <div class="bg-orange-50 rounded-xl p-6 text-center mb-6 border-2 border-orange-200">
+          <p class="text-sm text-gray-500 uppercase tracking-wide">Your Referral Code</p>
+          <div class="flex items-center justify-center gap-3 mt-2">
+            <span id="userReferralCode" class="text-3xl md:text-4xl font-mono font-bold text-orange-600 tracking-wider">------</span>
+            <button id="copyCodeBtn" class="bg-gray-200 hover:bg-gray-300 p-2 rounded-lg transition"><i class="fas fa-copy"></i></button>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Share this code with friends → they get ₦200 off, you earn ₦200!</p>
+          
+          <div class="mt-4">
+            <p class="text-sm text-gray-600 mb-2">Or share this link:</p>
+            <div class="flex items-center justify-center gap-2 flex-wrap">
+              <input type="text" id="referralLink" readonly class="bg-white border border-gray-300 rounded-lg p-2 text-sm w-80 text-center font-mono">
+              <button id="copyLinkBtn" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition"><i class="fas fa-copy mr-1"></i> Copy Link</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-green-50 rounded-xl p-4 text-center">
+            <i class="fas fa-users text-2xl text-green-500 mb-2"></i>
+            <p class="text-3xl font-bold text-green-600" id="referralCount">0</p>
+            <p class="text-sm text-gray-600">People Referred</p>
+          </div>
+          <div class="bg-blue-50 rounded-xl p-4 text-center">
+            <i class="fas fa-money-bill-wave text-2xl text-blue-500 mb-2"></i>
+            <p class="text-3xl font-bold text-blue-600" id="earningsAmount">₦0</p>
+            <p class="text-sm text-gray-600">Total Earnings</p>
+          </div>
+        </div>
+
+        <div class="bg-gray-100 rounded-xl p-3 text-center text-sm text-gray-600">
+          <i class="fas fa-info-circle text-orange-500 mr-1"></i> 
+          You earn ₦200 for each person who registers on the waitlist using your referral code!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========= SUPABASE CONFIGURATION =========
+    const SUPABASE_URL = "https://thiksscedkfmqcpatedq.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaWtzc2NlZGtmbXFjcGF0ZWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNDc2NzYsImV4cCI6MjA5MjYyMzY3Nn0.zI5_7tWfdoNG700HOyK4eDrCMiITD9MXyqtMTImNJKA";
+    
+    const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Get the correct base URL - CHANGE THIS TO YOUR OPTORIDE DOMAIN!
+    function getBaseUrl() {
+      // REPLACE with your actual OptobRide domain
+      // Example: "https://optobride.com" or "https://www.optobride.com"
+      return "https://optobride.com";
+      
+      // OR use auto-detection (works on any server including localhost)
+      // return window.location.origin;
+    }
+
+    async function checkAuth() {
+      const saved = localStorage.getItem('optob_referrer');
+      if (!saved) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      const user = JSON.parse(saved);
+      
+      const { data: freshUser, error } = await _supabase
+        .from('referrers')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      if (error || !freshUser) {
+        localStorage.removeItem('optob_referrer');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      document.getElementById('dashboardName').innerText = freshUser.fullname;
+      document.getElementById('userReferralCode').innerText = freshUser.referral_code;
+      document.getElementById('referralCount').innerText = freshUser.referral_count || 0;
+      document.getElementById('earningsAmount').innerHTML = `₦${(freshUser.earnings || 0).toLocaleString()}`;
+      
+      // Fix: Use the correct base URL for OptobRide
+      const baseUrl = getBaseUrl();
+      const waitlistPage = baseUrl + '/waitlist.html';
+      const referralLink = `${waitlistPage}?ref=${freshUser.referral_code}`;
+      
+      document.getElementById('referralLink').value = referralLink;
+      console.log('Referral link generated:', referralLink);
+      
+      localStorage.setItem('optob_referrer', JSON.stringify(freshUser));
+    }
+    
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('optob_referrer');
+      window.location.href = 'login.html';
+    });
+    
+    document.getElementById('copyCodeBtn').addEventListener('click', () => {
+      const code = document.getElementById('userReferralCode').innerText;
+      navigator.clipboard.writeText(code);
+      alert('✅ Referral code copied!');
+    });
+    
+    document.getElementById('copyLinkBtn').addEventListener('click', () => {
+      const link = document.getElementById('referralLink').value;
+      navigator.clipboard.writeText(link);
+      alert('✅ Referral link copied!');
+    });
+    
+    checkAuth();
+  </script>
+</body>
+</html>
