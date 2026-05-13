@@ -282,7 +282,7 @@
           <div id="waitlistSuccess" class="hidden text-center">
             <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-check text-3xl text-green-600"></i></div>
             <h2 class="text-2xl font-bold text-gray-800 mb-2">You're on the waitlist! 🎉</h2>
-            <p class="text-gray-600 mb-6">Thanks for joining! We'll notify you when Optob launches.</p>
+            <p class="text-gray-600 mb-6">Thanks for joining! A confirmation email has been sent to you.</p>
             <button id="closeSuccessBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg">Close</button>
           </div>
         </div>
@@ -423,30 +423,53 @@
       }
     }
 
-    // ===== SEND EMAIL TO ADMIN USING YOUR EXACT TEMPLATE =====
-    async function sendAdminEmail(name, email, phone, referralCode) {
+    // ===== SEND WELCOME EMAIL TO WAITLIST MEMBER (Using your template ID template_dod7ab4) =====
+    async function sendWelcomeEmailToUser(name, email) {
       try {
-        // These parameters match your EmailJS template variables
-        const templateParams = {
-          from_name: name,           // {{from_name}} in your template
-          from_email: email,         // {{from_email}} in your template
-          phone: phone,              // {{phone}} in your template
+        const welcomeTemplateParams = {
+          user_name: name,
+          to_email: email,
+          current_year: new Date().getFullYear(),
           date: new Date().toLocaleDateString('en-US', { 
             weekday: 'long', 
             year: 'numeric', 
             month: 'long', 
             day: 'numeric' 
-          }),                        // {{date}} in your template
-          time: new Date().toLocaleTimeString('en-US')  // {{time}} in your template
+          })
         };
         
-        // Send using your EmailJS credentials
-        const response = await emailjs.send('service_x0bcosf', 'template_humkfbk', templateParams);
-        console.log('✅ Admin email sent successfully!');
-        console.log('📧 Email sent to admin with details:', { name, email, phone });
+        // Using your template ID: template_dod7ab4
+        await emailjs.send('service_x0bcosf', 'template_dod7ab4', welcomeTemplateParams);
+        console.log('✅ Welcome email sent to:', email);
         return true;
       } catch (error) {
-        console.error('❌ Admin email sending failed:', error);
+        console.error('❌ Welcome email failed:', error);
+        return false;
+      }
+    }
+
+    // ===== SEND EMAIL TO ADMIN =====
+    async function sendAdminEmail(name, email, phone, referralCode) {
+      try {
+        const templateParams = {
+          from_name: name,
+          from_email: email,
+          phone: phone,
+          referral_code: referralCode || 'None',
+          date: new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          }),
+          time: new Date().toLocaleTimeString('en-US')
+        };
+        
+        await emailjs.send('service_x0bcosf', 'template_humkfbk', templateParams);
+        console.log('✅ Admin email sent successfully!');
+        return true;
+      } catch (error) {
+        console.error('❌ Admin email failed:', error);
         return false;
       }
     }
@@ -473,10 +496,10 @@
     if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', closeModal);
     if (waitlistModal) waitlistModal.addEventListener('click', (e) => { if (e.target === waitlistModal) closeModal(); });
 
-    // Initialize EmailJS with your public key
+    // Initialize EmailJS
     emailjs.init("kStvIXBSAp4wltPWq");
 
-    // FORM SUBMIT HANDLER - SENDS EMAIL TO ADMIN
+    // FORM SUBMIT HANDLER
     if (waitlistForm) {
       waitlistForm.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -526,12 +549,13 @@
           // Backup to localStorage
           localStorage.setItem('optob_waitlist', JSON.stringify({ name, email, phone, referralCode, date: new Date().toISOString() }));
           
-          // ===== SEND EMAIL TO ADMIN USING YOUR TEMPLATE =====
-          const emailSent = await sendAdminEmail(name, email, phone, referralCode);
+          // ===== SEND WELCOME EMAIL TO USER (Using your template template_dod7ab4) =====
+          await sendWelcomeEmailToUser(name, email);
           
-          if (emailSent) {
-            console.log('✅ Admin notified about new waitlist signup');
-          }
+          // ===== SEND EMAIL TO ADMIN =====
+          await sendAdminEmail(name, email, phone, referralCode);
+          
+          console.log('✅ Both welcome and admin emails sent successfully!');
           
           formContainer.classList.add('hidden');
           waitlistSuccess.classList.remove('hidden');
@@ -550,8 +574,8 @@
 
     autoFillReferralFromURL();
     console.log('=== WAITLIST READY ===');
-    console.log('📧 Admin email will be sent when someone joins the waitlist');
-    console.log('📧 Template variables: from_name, from_email, phone, date, time');
+    console.log('📧 Welcome email will be sent to users using template: template_dod7ab4');
+    console.log('📧 Admin notification will be sent using template: template_humkfbk');
   </script>
 </body>
 </html>
