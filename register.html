@@ -17,7 +17,7 @@
         OR
       </div>
       <h1 class="text-2xl font-bold text-gray-800">Optob<span class="text-orange-500">Ride</span></h1>
-      <p class="text-gray-500 text-sm mt-1">Register to get your referral code</p>
+      <p class="text-gray-500 text-sm mt-1">Register to get your referral code and earn rewards!</p>
     </div>
 
     <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -28,20 +28,21 @@
         <form id="registerForm">
           <div class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
               <input type="text" id="fullname" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
               <input type="email" id="email" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
               <input type="tel" id="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Password (min 4 characters)</label>
-              <input type="password" id="password" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none">
+              <label class="block text-sm font-medium text-gray-700 mb-1">Password * (min 4 characters)</label>
+              <input type="password" id="password" required minlength="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none">
+              <p class="text-xs text-gray-500 mt-1">Must be at least 4 characters</p>
             </div>
             <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-3 rounded-xl hover:opacity-90 transition shadow-md">
               <i class="fas fa-gift mr-2"></i> Register & Get My Code
@@ -50,7 +51,7 @@
         </form>
         <p class="text-center text-sm text-gray-500 mt-4">
           Already have an account? 
-          <a href="login.html" class="text-orange-500 font-semibold hover:underline">Login here →</a>
+          <a href="#" class="text-orange-500 font-semibold hover:underline">Login here →</a>
         </p>
       </div>
     </div>
@@ -64,93 +65,167 @@
     const SUPABASE_URL = "https://thiksscedkfmqcpatedq.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaWtzc2NlZGtmbXFjcGF0ZWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNDc2NzYsImV4cCI6MjA5MjYyMzY3Nn0.zI5_7tWfdoNG700HOyK4eDrCMiITD9MXyqtMTImNJKA";
     
-    const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Generate a unique referral code
     function generateReferralCode(name) {
-      const prefix = name.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X');
+      // Take first 3 letters of name, make uppercase, remove special chars
+      let prefix = name.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X');
+      if (prefix.length < 3) prefix = prefix + 'X'.repeat(3 - prefix.length);
+      
+      // Generate random 5 characters
       const random = Math.random().toString(36).substring(2, 7).toUpperCase();
       return `${prefix}${random}`;
+    }
+
+    // Check if referral code is unique
+    async function isReferralCodeUnique(code) {
+      const { data, error } = await supabase
+        .from('referrers')
+        .select('referral_code')
+        .eq('referral_code', code)
+        .single();
+      
+      return !data; // Returns true if code doesn't exist
+    }
+
+    // Check if email already exists
+    async function isEmailUnique(email) {
+      const { data, error } = await supabase
+        .from('referrers')
+        .select('email')
+        .eq('email', email.toLowerCase())
+        .single();
+      
+      return !data; // Returns true if email doesn't exist
     }
 
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const fullname = document.getElementById('fullname').value.trim();
-      const email = document.getElementById('email').value.trim();
+      const email = document.getElementById('email').value.trim().toLowerCase();
       const phone = document.getElementById('phone').value.trim();
       const password = document.getElementById('password').value;
       
+      // Validation
       if (!fullname || !email || !phone || !password) {
-        alert('Please fill all fields');
+        showError('Please fill in all fields');
         return;
       }
       
       if (password.length < 4) {
-        alert('Password must be at least 4 characters');
+        showError('Password must be at least 4 characters');
         return;
       }
       
-      // Check if email exists
-      const { data: existing } = await _supabase
-        .from('referrers')
-        .select('email')
-        .eq('email', email)
-        .single();
-      
-      if (existing) {
-        document.getElementById('errorMessage').innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> Email already registered! Please login.';
-        document.getElementById('errorMessage').classList.remove('hidden');
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 2000);
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showError('Please enter a valid email address');
         return;
       }
       
-      // Generate unique referral code
-      let referralCode = generateReferralCode(fullname);
-      let isUnique = false;
-      while (!isUnique) {
-        const { data: existing } = await _supabase
+      // Show loading state
+      const submitBtn = document.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Checking...';
+      submitBtn.disabled = true;
+      
+      try {
+        // Check if email already exists
+        const emailUnique = await isEmailUnique(email);
+        if (!emailUnique) {
+          showError('❌ Email already registered! Please login instead.');
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          setTimeout(() => {
+            // Optionally redirect to login page
+            // window.location.href = 'login.html';
+          }, 2000);
+          return;
+        }
+        
+        // Generate unique referral code
+        let referralCode = generateReferralCode(fullname);
+        let isUnique = await isReferralCodeUnique(referralCode);
+        
+        // Keep generating until unique
+        let attempts = 0;
+        while (!isUnique && attempts < 10) {
+          referralCode = generateReferralCode(fullname + attempts);
+          isUnique = await isReferralCodeUnique(referralCode);
+          attempts++;
+        }
+        
+        if (!isUnique) {
+          // Final fallback with timestamp
+          referralCode = `USER${Date.now().toString().slice(-6)}`;
+        }
+        
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Creating account...';
+        
+        // Insert new user into referrers table
+        const { data: newUser, error } = await supabase
           .from('referrers')
-          .select('referral_code')
-          .eq('referral_code', referralCode)
+          .insert([{
+            fullname: fullname,
+            email: email,
+            phone: phone,
+            password: password, // Note: In production, hash this password!
+            referral_code: referralCode,
+            referral_count: 0,
+            earnings: 0
+          }])
+          .select()
           .single();
-        if (!existing) isUnique = true;
-        else referralCode = generateReferralCode(fullname);
+        
+        if (error) {
+          console.error('Supabase error:', error);
+          
+          // Check if it's a duplicate email error
+          if (error.code === '23505') {
+            showError('❌ This email is already registered! Please login.');
+          } else {
+            showError('Registration error: ' + error.message);
+          }
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          return;
+        }
+        
+        // Save to localStorage
+        localStorage.setItem('optob_referrer', JSON.stringify(newUser));
+        
+        // Show success message
+        showSuccess(`✅ Registration successful!<br><br>Your referral code: <strong class="text-xl">${referralCode}</strong><br><br>Share this code with friends!<br>You earn ₦200 for each friend who joins using your code.<br><br>Redirecting to dashboard...`);
+        
+        // Redirect to dashboard after 3 seconds
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 3000);
+        
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        showError('An unexpected error occurred. Please try again.');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
       }
-      
-      // Insert new user
-      const { data: newUser, error } = await _supabase
-        .from('referrers')
-        .insert([{
-          fullname: fullname,
-          email: email,
-          phone: phone,
-          password: password,
-          referral_code: referralCode,
-          referral_count: 0,
-          earnings: 0
-        }])
-        .select()
-        .single();
-      
-      if (error) {
-        console.error(error);
-        document.getElementById('errorMessage').innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> Registration error: ' + error.message;
-        document.getElementById('errorMessage').classList.remove('hidden');
-        return;
-      }
-      
-      // Save to localStorage and redirect to dashboard
-      localStorage.setItem('optob_referrer', JSON.stringify(newUser));
-      
-      document.getElementById('successMessage').innerHTML = `✅ Registration successful! Your referral code: <strong>${referralCode}</strong><br>Redirecting to dashboard...`;
-      document.getElementById('successMessage').classList.remove('hidden');
-      
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 2000);
     });
+    
+    function showError(message) {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i> ' + message;
+      errorDiv.classList.remove('hidden');
+      setTimeout(() => {
+        errorDiv.classList.add('hidden');
+      }, 5000);
+    }
+    
+    function showSuccess(message) {
+      const successDiv = document.getElementById('successMessage');
+      successDiv.innerHTML = message;
+      successDiv.classList.remove('hidden');
+    }
   </script>
 </body>
 </html>
