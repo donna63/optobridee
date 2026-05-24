@@ -2,40 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Optob Services – Ride & Deliver | Join Waitlist</title>
-
-  <!-- Tailwind CDN -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Optob — Future of Movement | Join Waitlist</title>
+  <!-- Tailwind CSS + Font Awesome + Lucide + EmailJS + Supabase -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide icons -->
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.258.0/dist/lucide.min.js"></script>
-  <!-- Font-Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
-    /* ===== PRELOADER ANIMATION ===== */
+    /* preloader & animations */
     #preloader {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       background-color: #FF6B00;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 99999;
-      transition: opacity 0.5s ease-out;
+      display: flex; justify-content: center; align-items: center;
+      z-index: 99999; transition: opacity 0.5s ease-out;
       animation: pulseBackground 0.5s ease-in-out infinite;
     }
     #preloader.fade-out { animation: fadeOut 0.8s ease-out forwards; }
     @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
     @keyframes pulseBackground { 0%,100%{background-color:#FF6B00} 50%{background-color:#FF8C00} }
-    
     #preloader-logo { width: 120px; height: 120px; animation: blinkLogo 3s ease-in-out 6; }
     @keyframes blinkLogo {
       0%{opacity:1;transform:scale(1) rotate(0deg)} 8%{opacity:0;transform:scale(0.8) rotate(5deg)}
@@ -46,536 +33,258 @@
       80%{opacity:1;transform:scale(1.1) rotate(-5deg)} 88%{opacity:0;transform:scale(0.8) rotate(5deg)}
       96%{opacity:1;transform:scale(1.1) rotate(-5deg)} 100%{opacity:1;transform:scale(1) rotate(0deg)}
     }
-
-    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
     @keyframes fadeInUp{ from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
     @keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
     @keyframes bounceIn{ 0%{opacity:0;transform:scale(.3)} 50%{opacity:1;transform:scale(1.05)} 70%{transform:scale(.9)} 100%{opacity:1;transform:scale(1)} }
-    @keyframes slideInRight{ from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
-    @keyframes slideInLeft{ from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
-
-    .animate-float { animation:float 3s ease-in-out infinite }
-    .animate-fadeInUp { animation:fadeInUp .8s ease-out forwards }
+    @keyframes slideInLeft { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .animate-fadeInUp { animation:fadeInUp .6s ease-out forwards }
     .animate-pulse-slow{ animation:pulse 2s infinite }
-    .animate-bounceIn { animation:bounceIn .8s ease-out forwards }
-    .animate-slideInRight { animation: slideInRight 0.5s ease-out forwards; }
-    .animate-slideInLeft { animation: slideInLeft 0.5s ease-out forwards; }
-    .delay-100{animation-delay:.2s} .delay-200{animation-delay:.3s} .delay-300{animation-delay:.4s}
-    .delay-400{animation-delay:.5s} .delay-500{animation-delay:.6s} .delay-600{animation-delay:.7s}  
-
-    .scroll-animate{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
-    .scroll-animate.animated{opacity:1;transform:translateY(0)}
-
-    .mobile-sidebar{
-      position:fixed; top:0; right:-300px; width:300px; height:100vh; background:#1e293b;
-      z-index:1000; transition:right .3s ease; overflow-y:auto; padding:20px; box-shadow:-5px 0 15px rgba(0,0,0,.1);
+    .animate-bounceIn { animation:bounceIn .8s ease-out forwards; }
+    .delay-100{animation-delay:.15s} .delay-200{animation-delay:.3s} .delay-300{animation-delay:.45s}
+    
+    /* slide in classes */
+    .slide-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-    .mobile-sidebar.active{right:0}
-    .mobile-sidebar-overlay{
-      position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:999; opacity:0; visibility:hidden; transition:opacity .3s ease;
+    .slide-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-    .mobile-sidebar-overlay.active{opacity:1;visibility:visible}
-
-    #waitlistModal { z-index: 9999 !important; }
-    .mobile-sidebar { z-index: 1000; }
-    .mobile-sidebar-overlay { z-index: 999; }
-
+    .slide-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .slide-left.animated, .slide-right.animated, .slide-up.animated {
+      opacity: 1;
+      transform: translateX(0) translateY(0);
+    }
+    
     #main-content { opacity: 0; transition: opacity 0.5s ease-in; }
     #main-content.show { opacity: 1; }
     .hidden-init { display: none; }
+    .hero-glow {
+      background: radial-gradient(ellipse at 80% 30%, rgba(255,107,0,0.08), transparent 70%);
+    }
   </style>
 </head>
-
-<body class="font-sans bg-gray-50">
-  <!-- PRELOADER -->
-  <div id="preloader">
-    <img src="images/image-removebg-preview (26).png" id="preloader-logo" alt="Optob Logo">
-  </div>
-
+<body class="bg-white antialiased font-sans">
+  <div id="preloader"><img src="images/image-removebg-preview (26).png" id="preloader-logo" alt="Optob Logo"></div>
   <div id="main-content" class="hidden-init">
-    <!-- MOBILE DRAWER -->
-    <div class="mobile-sidebar-overlay"></div>
-    <aside class="mobile-sidebar">
-      <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-600">
+
+    <!-- ========== SIMPLE NAVBAR: ONLY LOGO + JOIN WAITLIST ========== -->
+    <nav class="bg-white/90 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8 py-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="images/image-removebg-preview (26).png" class="w-10" alt="logo">
-          <h1 class="text-white font-bold text-xl">Optob</h1>
+          <img src="images/image-removebg-preview (26).png" class="w-10 h-10 object-contain drop-shadow-sm" alt="Optob">
+          <span class="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Optob</span>
         </div>
-        <button class="text-white text-2xl" id="closeMobile"><i class="fas fa-times"></i></button>
-      </div>
-      <nav class="flex flex-col gap-4">
-        <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-100">Driver</a>
-        <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-200">Courier</a>
-        <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-300">About us</a>
-        <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-400">Blog</a>
-        <a href="#" class="text-slate-300 hover:text-white hover:bg-slate-700 px-3 py-2 rounded animate-slideInRight delay-500">Help</a>
-        <button class="waitlist-mobile-btn bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded text-center mt-4 animate-slideInRight delay-500">
-          <i class="fas fa-clock mr-2"></i> Join Waitlist
+        <button id="navWaitlistBtn" class="bg-black hover:bg-gray-800 text-white px-6 py-2.5 rounded-full text-sm font-semibold shadow-md transition-all duration-300 flex items-center gap-2">
+          <i class="fas fa-clock text-amber-400"></i> Join waitlist
         </button>
-      </nav>
-    </aside>
-
-    <!-- HEADER -->
-    <header class="bg-blue-950 text-white">
-      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <img src="images/image-removebg-preview (26).png" class="w-10 animate-pulse-slow" alt="logo">
-          <h1 class="text-2xl font-bold">Optob <span class="text-white">Ride</span></h1>
-        </div>
-        <nav class="hidden md:flex gap-6 text-white">
-          <a href="#" class="hover:text-indigo-300 transition">Driver</a>
-          <a href="#" class="hover:text-indigo-300 transition">Courier</a>
-          <a href="#" class="hover:text-indigo-300 transition">About us</a>
-          <a href="#" class="hover:text-indigo-300 transition">Blog</a>
-        </nav>
-        <button class="md:hidden text-2xl" id="openMobile"><i class="fas fa-bars"></i></button>
       </div>
-    </header>
+    </nav>
 
-    <!-- HERO SECTION -->
-    <section class="py-16 bg-white">
-      <div class="container mx-auto px-4">
-        <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:flex items-center gap-10 scroll-animate">
-          <div class="flex-1">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4 animate-fadeInUp">
-              Ready to <span class="text-amber-400 underline">ride</span> or <br><span class="text-amber-400 underline">deliver?</span>
-            </h2>
-            <p class="text-xl mb-6 animate-fadeInUp delay-100">Let's get moving</p>
-            <div class="flex items-center gap-2 mb-4 animate-fadeInUp delay-200">
-              <i data-lucide="map-pin" class="w-5 h-5 text-indigo-600"></i>
-              <span class="font-medium">Abuja, NG</span>
-              <button class="ml-3 text-sm text-indigo-600">Change my location</button>
+    <!-- ========== HERO SECTION – slide in from left + right ========== -->
+    <section class="relative overflow-hidden bg-white py-20 md:py-28 hero-glow">
+      <div class="max-w-6xl mx-auto px-5 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <!-- left: text-heavy hero - slide from left -->
+          <div class="space-y-6 slide-left">
+            <!-- <div class="inline-flex items-center gap-2 bg-amber-50 text-amber-700 px-4 py-1.5 rounded-full text-sm font-medium">
+              <i class="fas fa-bolt text-amber-500"></i> <span>Movement reimagined</span>
+            </div> -->
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-tight">
+              Empowering the future of <span class="text-amber-500">rides</span> and <span class="text-amber-500">deliveries</span><br> swift, smart, unstoppable.
+            </h1>
+            <p class="text-lg md:text-xl text-gray-600 leading-relaxed border-l-4 border-amber-400 pl-5 italic">
+              “Movement isn't just what we do  it's who we are. It drives us to innovate, to reimagine mobility, and to deliver at the speed of now.”
+            </p>
+            <div class="prose prose-lg text-gray-500 space-y-3">
+              <p>From people to packages, we are building the future of how the world moves  <strong class="text-gray-800">smarter, faster, everywhere</strong>. Whether you're catching a ride, sending a parcel, or earning on the go, every journey matters. Optob Ride integrates cutting-edge technology, real-time monitoring, and smart systems to protect you.</p>
+              <p class="flex items-center gap-2 text-amber-600 text-base"><i class="fas fa-check-circle"></i> <span>Efficiency. Reliability. Sustainability. Global reach.</span></p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 animate-fadeInUp delay-300">
-              <div class="border rounded-lg p-3"><label class="text-xs text-gray-500">Pickup location</label><input type="text" class="w-full outline-none" placeholder="Enter pickup location"></div>
-              <div class="border rounded-lg p-3"><label class="text-xs text-gray-500">Dropoff location</label><input type="text" class="w-full outline-none" placeholder="Enter dropoff location"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-4 mb-6 animate-fadeInUp delay-400">
-              <div class="border rounded-lg p-3"><label class="text-xs text-gray-500">Date</label><div class="font-medium">Today</div></div>
-              <div class="border rounded-lg p-3"><label class="text-xs text-gray-500">Time</label><div class="font-medium">Now</div></div>
-            </div>
-            <div class="border-t pt-4 animate-fadeInUp delay-500"><h3 class="font-bold mb-2">See Prices</h3><p class="text-sm text-gray-600">Log in to see your recent activity</p></div>
-            <div class="mt-8 animate-fadeInUp delay-600">
-              <button id="waitlistBtn" class="bg-gradient-to-r from-blue-900 to-blue-900 text-white px-12 py-5 rounded-full text-xl font-bold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:scale-105 shadow-lg w-full max-w-lg mx-auto block">
-                <i class="fas fa-clock mr-3"></i> Join Our Exclusive Waitlist
+            <div class="flex flex-wrap gap-4 pt-4">
+              <button id="heroWaitlistBtn" class="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl transition-all duration-300 flex items-center gap-2">
+                <i class="fas fa-star-of-life"></i> Join exclusive waitlist
               </button>
-              <p class="text-center text-sm text-gray-600 mt-4 max-w-lg mx-auto">Be among the first to access premium features, early benefits, and launch discounts!</p>
+              <!-- <span class="text-gray-500 self-center text-sm flex items-center gap-1"><i class="fas fa-users"></i> 1,200+ early members</span> -->
+            </div>
+            <div class="flex flex-wrap gap-6 pt-4 text-sm text-gray-400 border-t border-gray-100 pt-5">
+              <span><i class="fas fa-shield-alt text-amber-500"></i> Fully licensed & insured</span>
+              <span><i class="fas fa-leaf text-amber-500"></i> Eco-conscious future</span>
+              <span><i class="fas fa-clock text-amber-500"></i> Real-time tracking</span>
             </div>
           </div>
-          <div class="animate-float"><img src="images/image-removebg-preview (7).png" class="w-64 mx-auto" alt="cart"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SERVICES -->
-    <section class="py-16 bg-white">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12 scroll-animate">Optob Services</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="bg-gray-50 p-6 rounded-xl shadow-md flex items-center gap-4 scroll-animate">
-            <div><h3 class="text-xl font-bold mb-2">Ride</h3><p class="text-gray-600">Go anywhere with Optob Ride. Request a ride, hop in, and go.</p></div>
-            <img src="images/image-removebg-preview (8).png" class="w-24" alt="">
-          </div>
-          <div class="bg-gray-50 p-6 rounded-xl shadow-md scroll-animate">
-            <h4 class="font-bold mb-2">Reserve</h4><p class="text-gray-600 text-sm">Reserve your ride in advance so you can relax on the day of your trip.</p>
-            <img src="images/image-removebg-preview (9).png" class="w-24 mx-auto mt-4" alt="">
-          </div>
-          <div class="bg-gray-50 p-6 rounded-xl shadow-md flex items-center gap-4 scroll-animate">
-            <div><h3 class="text-xl font-bold mb-2">Courier</h3><p class="text-gray-600">Deliveries seamlessly Done with Speed & Safety</p></div>
-            <img src="images/image-removebg-preview (10).png" class="w-24" alt="">
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SCHEDULE RIDE -->
-    <section class="py-16 bg-white">
-      <div class="container mx-auto px-4">
-        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-center scroll-animate">
-          <div class="bg-gray-50 p-6 rounded-xl shadow-md">
-            <h4 class="font-bold mb-2">Benefits</h4>
-            <ul class="list-disc pl-5 text-gray-600 space-y-1 text-sm">
-              <li>Choose your exact pickup time up to 90 days in advance.</li>
-              <li>Extra wait time included to meet your ride.</li>
-              <li>Cancel at no charge up to 60 minutes in advance.</li>
-            </ul>
-            <a href="#" class="text-indigo-600 text-sm mt-2 inline-block">See Terms</a>
-          </div>
-          <div class="bg-blue-950 text-white p-6 rounded-xl shadow-md">
-            <h3 class="text-2xl font-bold mb-4">Schedule your ride right with <span class="text-amber-400">Optob Ride</span></h3>
-            <h4 class="font-bold mb-3">Choose date and time</h4>
-            <div class="grid grid-cols-2 gap-4 mb-6">
-              <div class="bg-white/10 border border-white/20 rounded-lg p-3"><label class="text-xs text-white/70">Date</label><input type="date" class="w-full bg-transparent outline-none text-white"></div>
-              <div class="bg-white/10 border border-white/20 rounded-lg p-3"><label class="text-xs text-white/70">Time</label><input type="time" class="w-full bg-transparent outline-none text-white"></div>
+          <!-- right visual - slide from right -->
+          <div class="relative flex justify-center slide-right">
+            <div class="relative w-80 h-80 md:w-96 md:h-96 bg-gradient-to-br from-amber-100 to-orange-50 rounded-full flex items-center justify-center shadow-2xl animate-pulse-slow">
+              <img src="images/image-removebg-preview (7).png" class="w-64 md:w-72 object-contain drop-shadow-2xl" alt="Optob delivery">
             </div>
-            <button class="w-full bg-indigo-500 text-white py-3 rounded-lg hover:bg-indigo-600 transition">Next</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SECURE DELIVERIES -->
-    <section class="py-16 bg-white">
-      <div class="container mx-auto px-4 grid md:grid-cols-2 gap-10 items-center scroll-animate">
-        <div class="animate-slideInLeft"><img src="images/image-removebg-preview (12).png" class="w-full" alt=""></div>
-        <div class="animate-slideInRight"><h2 class="text-3xl font-bold mb-4">Secure & Insured <br> Deliveries</h2><p class="text-xl text-gray-700 mb-8">Your delivery, your rules. Track your packages in real-time</p></div>
-      </div>
-    </section>
-
-    <!-- DRIVER SECTION -->
-    <section class="py-16 bg-amber-50">
-      <div class="container mx-auto px-4 grid md:grid-cols-2 gap-10 items-center scroll-animate">
-        <div><h2 class="text-3xl font-bold mb-4">Drive when you want, make what you need</h2><p class="text-xl text-gray-700 mb-8">Make money on your schedule with deliveries or rides—or both. You can use your own car or choose a rental from Optob Ride.</p></div>
-        <div class="animate-float"><img src="images/image-removebg-preview (15).png" class="w-full" alt=""></div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="py-16 bg-white">
-      <div class="container mx-auto px-4">
-        <div class="text-center mb-12 scroll-animate"><h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Frequently Asked Questions</h2><p class="text-lg text-gray-600">Questions you might have, answered all in one place.</p></div>
-        <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-          <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate"><button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg"><span>What is Optob Ride?</span><i class="fas fa-plus text-indigo-600"></i></button><div class="faq-answer hidden px-6 pb-6"><p class="text-gray-700">Optob Ride is a fast growing logistics and transportation company.</p></div></div>
-          <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate"><button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg"><span>Is Optob Ride licensed?</span><i class="fas fa-plus text-indigo-600"></i></button><div class="faq-answer hidden px-6 pb-6"><p class="text-gray-700">Yes, fully licensed and insured.</p></div></div>
-          <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate"><button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg"><span>How do I register on Optob Ride?</span><i class="fas fa-plus text-indigo-600"></i></button><div class="faq-answer hidden px-6 pb-6"><p class="text-gray-700">Registration is simple! Download our app, enter your phone number, verify.</p></div></div>
-          <div class="bg-white rounded-lg shadow-md overflow-hidden scroll-animate"><button class="faq-question w-full text-left p-6 flex justify-between items-center font-medium text-lg"><span>How do I fund my Optob wallet?</span><i class="fas fa-plus text-indigo-600"></i></button><div class="faq-answer hidden px-6 pb-6"><p class="text-gray-700">You can fund your wallet using various payment methods.</p></div></div>
+    <!-- ========== VALUES SECTION: slide from left & right alternately ========== -->
+    <section class="py-16 bg-white border-y border-gray-100">
+      <div class="max-w-6xl mx-auto px-5">
+        <div class="text-center max-w-3xl mx-auto mb-12 slide-up">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Built on <span class="text-amber-500">movement & trust</span></h2>
+          <p class="text-gray-500 mt-3 text-lg">Our mission and vision fuel every ride, every delivery, every connection.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-gray-50 rounded-2xl p-6 shadow-sm slide-left" style="transition-delay: 0s;"><i class="fas fa-bullseye text-3xl text-amber-500 mb-3"></i><h3 class="text-xl font-bold mb-2">Mission</h3><p class="text-gray-600 text-sm">To connect people and goods in real time through innovative, future-ready solutions that are safe, seamless, and environmentally conscious. Empower drivers & couriers to earn fairly and deliver faster.</p></div>
+          <div class="bg-gray-50 rounded-2xl p-6 shadow-sm slide-up" style="transition-delay: 0.1s;"><i class="fas fa-eye text-3xl text-amber-500 mb-3"></i><h3 class="text-xl font-bold mb-2">Vision (CEIGS)</h3><p class="text-gray-600 text-sm"><span class="font-semibold">Customer focus, Efficiency, Innovation, Global reach, Sustainability.</span> We aim to be the #1 logistics company through technology & customer first mindset.</p></div>
+          <div class="bg-gray-50 rounded-2xl p-6 shadow-sm slide-right" style="transition-delay: 0.2s;"><i class="fas fa-handshake text-3xl text-amber-500 mb-3"></i><h3 class="text-xl font-bold mb-2">Our Promise</h3><p class="text-gray-600 text-sm">Your safety drives us. Cutting-edge monitoring, smart systems, and a community-first approach guarantee reliability — whether in the back seat or on the move with a parcel.</p></div>
         </div>
       </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="bg-black text-white py-12">
-      <div class="container mx-auto px-4">
-        <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400 gap-4">
-          <div class="flex space-x-4"><a href="#" class="hover:text-white"><i class="fab fa-facebook-f"></i></a><a href="#" class="hover:text-white"><i class="fab fa-x-twitter"></i></a><a href="#" class="hover:text-white"><i class="fab fa-instagram"></i></a></div>
-          <p>© 2026 Optob Ride. All Rights Reserved</p>
-          <p>info@optobride.com</p>
+    <!-- ========== CORE SERVICES: alternating slides ========== -->
+    <section class="py-20 bg-amber-50/30">
+      <div class="max-w-6xl mx-auto px-5">
+        <div class="text-center mb-14 slide-up"><span class="text-amber-600 font-semibold tracking-wide">Optob ecosystem</span><h2 class="text-3xl md:text-4xl font-bold mt-2">Ride. Deliver. Reserve. <br>One seamless experience</h2></div>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-white p-7 rounded-2xl shadow-md hover:shadow-xl transition slide-left" style="transition-delay: 0s;"><img src="images/image-removebg-preview (8).png" class="w-20 h-20 mx-auto mb-4" alt="ride"><h3 class="text-2xl font-bold text-center">Optob Ride</h3><p class="text-gray-600 text-center mt-2">Go anywhere, anytime. Request a ride, hop in, and move with trusted drivers. Safety integrated at every turn.</p></div>
+          <div class="bg-white p-7 rounded-2xl shadow-md hover:shadow-xl transition slide-up" style="transition-delay: 0.1s;"><img src="images/image-removebg-preview (10).png" class="w-20 h-20 mx-auto mb-4" alt="courier"><h3 class="text-2xl font-bold text-center">Courier & Deliveries</h3><p class="text-gray-600 text-center mt-2">Seamless delivery of products, produce, parcels. From farmlands to city centers — optimized logistics with speed.</p></div>
+          <div class="bg-white p-7 rounded-2xl shadow-md hover:shadow-xl transition slide-right" style="transition-delay: 0.2s;"><img src="images/image-removebg-preview (9).png" class="w-20 h-20 mx-auto mb-4" alt="reserve"><h3 class="text-2xl font-bold text-center">Reserve in advance</h3><p class="text-gray-600 text-center mt-2">Schedule rides up to 90 days ahead. Extra wait time, free cancellation up to 60 min. Total peace of mind.</p></div>
         </div>
       </div>
-      <a href="#" class="fixed bottom-6 right-6 bg-white text-black rounded-full p-3 shadow-md hover:scale-110 transition"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg></a>
+    </section>
+
+    <!-- ========== SAFETY SECTION: slide from left (text) + slide from right (image) ========== -->
+    <section class="py-20 bg-white">
+      <div class="max-w-6xl mx-auto px-5 grid md:grid-cols-2 gap-12 items-center">
+        <div class="slide-left"><h2 class="text-3xl font-bold text-gray-900 mb-5">Your safety drives us</h2><p class="text-gray-600 text-lg leading-relaxed">With every ride and delivery, Optob integrates real-time monitoring, AI-driven safety tools, and smart systems that protect you — whether in the back seat, behind the wheel, or moving a parcel. Together with safety partners, we’re shaping a future where mobility is fast, efficient, and secure for all.</p><ul class="mt-6 space-y-2 text-gray-600"><li><i class="fas fa-check-circle text-amber-500 mr-2"></i> Real-time trip tracking + emergency assistance</li><li><i class="fas fa-check-circle text-amber-500 mr-2"></i> Vetted drivers & couriers</li><li><i class="fas fa-check-circle text-amber-500 mr-2"></i> 24/7 support + ride check-in</li></ul></div>
+        <div class="slide-right rounded-2xl overflow-hidden shadow-2xl"><img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80" class="w-full object-cover h-80" alt="safety"></div>
+      </div>
+    </section>
+
+    <!-- ========== DRIVER SECTION: image slide-left, text slide-right ========== -->
+    <section class="py-20 bg-gradient-to-r from-gray-50 to-white">
+      <div class="max-w-6xl mx-auto px-5 grid md:grid-cols-2 gap-10 items-center">
+        <div class="order-2 md:order-1 slide-left flex justify-center"><img src="images/image-removebg-preview (15).png" class="w-72 animate-float" alt="driver earnings"></div>
+        <div class="order-1 md:order-2 slide-right"><h2 class="text-3xl font-bold mb-4">Drive when you want, make what you need</h2><p class="text-gray-600 text-lg mb-5">Make money on your schedule with deliveries or rides — or both. Use your own car or choose a rental from Optob Ride. We empower drivers with fair earnings and flexible opportunities.</p><div class="flex items-center gap-2 text-amber-700"><i class="fas fa-chart-line"></i> <span class="font-medium">Join over 500+ active partners</span></div></div>
+      </div>
+    </section>
+
+    <!-- ========== FAQ SECTION: each faq item slide from left ========== -->
+    <section class="py-20 bg-white">
+      <div class="max-w-4xl mx-auto px-5">
+        <div class="text-center mb-12 slide-up"><h2 class="text-3xl font-bold">Frequently Asked Questions</h2><p class="text-gray-500">Everything you need to know about Optob Ride</p></div>
+        <div class="space-y-4">
+          <div class="bg-gray-50 rounded-xl overflow-hidden slide-left"><button class="faq-q w-full text-left p-5 flex justify-between items-center font-semibold text-gray-800"><span>What makes Optob different?</span><i class="fas fa-plus text-amber-500"></i></button><div class="faq-a hidden px-5 pb-5 text-gray-600">We combine rides, courier, and sustainability under one platform — with a mission to revolutionize mobility with safety, innovation, and global reach. Also, our referral rewards and real-time visibility set us apart.</div></div>
+          <div class="bg-gray-50 rounded-xl overflow-hidden slide-right"><button class="faq-q w-full text-left p-5 flex justify-between items-center font-semibold text-gray-800"><span>How do I register on Optob Ride?</span><i class="fas fa-plus text-amber-500"></i></button><div class="faq-a hidden px-5 pb-5 text-gray-600">Registration is simple! Download our app (coming soon) or join the waitlist today. You'll get early access, launch discounts, and exclusive perks.</div></div>
+          <div class="bg-gray-50 rounded-xl overflow-hidden slide-left"><button class="faq-q w-full text-left p-5 flex justify-between items-center font-semibold text-gray-800"><span>Is Optob Ride licensed and insured?</span><i class="fas fa-plus text-amber-500"></i></button><div class="faq-a hidden px-5 pb-5 text-gray-600">Yes, fully licensed and insured. We operate with strict safety compliance and driver verification.</div></div>
+          <div class="bg-gray-50 rounded-xl overflow-hidden slide-right"><button class="faq-q w-full text-left p-5 flex justify-between items-center font-semibold text-gray-800"><span>What's the referral program?</span><i class="fas fa-plus text-amber-500"></i></button><div class="faq-a hidden px-5 pb-5 text-gray-600">Share your unique referral code, and when friends join the waitlist, you unlock rewards and earn up to ₦200 credits per referral upon launch.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FOOTER (from about page) ========== -->
+    <footer class="bg-[#0a0a0a] text-white pt-16 pb-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-4 gap-12 mb-12">
+          <div><div class="flex items-center gap-2 mb-6"><img src="images/image-removebg-preview (26).png" class="w-10" alt="logo"><span class="text-xl font-semibold">Optob Ride</span></div></div>
+          <div><h4 class="font-semibold mb-4">Overall</h4><ul class="space-y-3 text-sm text-gray-400"><li><a href="#" class="hover:text-white">Homepage</a></li><li><a href="#" class="hover:text-white">About us</a></li><li><a href="#" class="hover:text-white">Blog</a></li><li><a href="#" class="hover:text-white">Careers</a></li></ul></div>
+          <div><h4 class="font-semibold mb-4">Services</h4><ul class="space-y-3 text-sm text-gray-400"><li><a href="#" class="hover:text-white">Ride</a></li><li><a href="#" class="hover:text-white">Drive</a></li><li><a href="#" class="hover:text-white">Delivery</a></li><li><a href="#" class="hover:text-white">Pick Ups</a></li></ul></div>
+          <div><div class="space-y-3"><a href="#" class="flex items-center gap-3 bg-white text-black px-4 py-3 rounded-xl hover:bg-gray-100"><i class="fab fa-apple text-2xl"></i><div><div class="text-xs">Download on the</div><div class="font-semibold">App Store</div></div></a><a href="#" class="flex items-center gap-3 bg-white text-black px-4 py-3 rounded-xl hover:bg-gray-100"><i class="fab fa-google-play text-2xl"></i><div><div class="text-xs">GET IT ON</div><div class="font-semibold">Google Play</div></div></a></div></div>
+        </div>
+        <div class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="flex gap-4"><a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700"><i class="fab fa-facebook-f"></i></a><a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700"><i class="fab fa-x-twitter"></i></a><a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700"><i class="fab fa-youtube"></i></a><a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700"><i class="fab fa-linkedin-in"></i></a><a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700"><i class="fab fa-instagram"></i></a></div>
+          <p class="text-sm text-gray-500">© 2026 Optob Ride. All Rights Reserved</p>
+          <div class="flex gap-6 text-sm text-gray-400"><a href="#" class="hover:text-white">Privacy</a><a href="#" class="hover:text-white">Accessibility</a><a href="#" class="hover:text-white">Terms</a></div>
+        </div>
+      </div>
+      <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="fixed bottom-6 right-6 w-12 h-12 bg-white text-black rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 z-40"><i class="fas fa-arrow-up"></i></button>
     </footer>
 
-    <!-- WAITLIST MODAL -->
+    <!-- WAITLIST MODAL (same robust functionality) -->
     <div class="fixed inset-0 bg-black/70 z-[2000] hidden items-center justify-center p-4" id="waitlistModal">
       <div class="bg-white rounded-2xl w-full max-w-md relative animate-bounceIn">
         <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl" id="closeWaitlist"><i class="fas fa-times"></i></button>
         <div class="p-8">
-          <div id="waitlistFormContainer">
-            <div class="text-center mb-6">
-              <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-clock text-3xl text-indigo-600"></i></div>
-              <h2 class="text-2xl font-bold text-gray-800 mb-2">Join Our Exclusive Waitlist</h2>
-              <p class="text-gray-600">Be the first to experience new features and get special early access benefits.</p>
-            </div>
-            <form id="waitlistForm">
-              <div class="space-y-4">
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label><input type="text" id="name" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none"></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Email Address *</label><input type="email" id="email" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none"></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label><input type="tel" id="phone" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none"></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Referral Code <span class="text-gray-400 text-xs">(Optional)</span></label>
-                  <input type="text" id="referralCode" placeholder="Enter code from friend" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 outline-none">
-                </div>
-              </div>
-              <button type="submit" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition"><i class="fas fa-paper-plane mr-2"></i> Join Waitlist</button>
-              <p class="text-xs text-gray-500 text-center mt-4">We respect your privacy. Your information is secure with us.</p>
-            </form>
-          </div>
-          <div id="waitlistSuccess" class="hidden text-center">
-            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-check text-3xl text-green-600"></i></div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">You're on the waitlist! 🎉</h2>
-            <p class="text-gray-600 mb-6">Thanks for joining! A confirmation email has been sent to you.</p>
-            <button id="closeSuccessBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg">Close</button>
-          </div>
+          <div id="waitlistFormContainer"><div class="text-center mb-6"><div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-clock text-3xl text-amber-600"></i></div><h2 class="text-2xl font-bold">Join Exclusive Waitlist</h2><p class="text-gray-600 mt-1">Be first to experience Optob Ride & delivery revolution.</p></div><form id="waitlistForm"><div class="space-y-4"><div><label class="block text-sm font-medium">Full Name *</label><input type="text" id="name" required class="w-full px-4 py-3 border-2 rounded-lg focus:border-amber-500"></div><div><label class="block text-sm font-medium">Email *</label><input type="email" id="email" required class="w-full px-4 py-3 border-2 rounded-lg focus:border-amber-500"></div><div><label class="block text-sm font-medium">Phone *</label><input type="tel" id="phone" required class="w-full px-4 py-3 border-2 rounded-lg focus:border-amber-500"></div><div><label>Referral Code <span class="text-gray-400 text-xs">(Optional)</span></label><input type="text" id="referralCode" placeholder="FRIENDCODE" class="w-full px-4 py-3 border-2 rounded-lg"></div></div><button type="submit" class="w-full mt-6 bg-black hover:bg-gray-800 text-white font-semibold py-3 rounded-lg"><i class="fas fa-paper-plane mr-2"></i> Join Waitlist</button><p class="text-xs text-gray-500 text-center mt-4">Privacy assured. Unlock early benefits.</p></form></div>
+          <div id="waitlistSuccess" class="hidden text-center"><div class="w-20 h-20 bg-green-100 rounded-full flex mx-auto mb-4 items-center justify-center"><i class="fas fa-check text-3xl text-green-600"></i></div><h2 class="text-2xl font-bold">You're on the list! 🎉</h2><p class="text-gray-600 mb-6">Confirmation email sent. Stay tuned for launch perks.</p><button id="closeSuccessBtn" class="bg-black text-white px-6 py-3 rounded-lg">Close</button></div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // ===== SUPABASE CONFIGURATION =====
+    // Supabase config
     const SUPABASE_URL = "https://thiksscedkfmqcpatedq.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaWtzc2NlZGtmbXFjcGF0ZWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNDc2NzYsImV4cCI6MjA5MjYyMzY3Nn0.zI5_7tWfdoNG700HOyK4eDrCMiITD9MXyqtMTImNJKA";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // PRELOADER
-    document.addEventListener('DOMContentLoaded', function() {
-      const preloader = document.getElementById('preloader');
-      const mainContent = document.getElementById('main-content');
-      setTimeout(function() {
-        preloader.classList.add('fade-out');
-        setTimeout(function() {
-          mainContent.classList.remove('hidden-init');
-          mainContent.classList.add('show');
-          setTimeout(function() { preloader.remove(); }, 500);
-        }, 300);
-      }, 3000);
-    });
-
-    // MOBILE DRAWER
-    const openMobile = document.getElementById('openMobile');
-    const closeMobile = document.getElementById('closeMobile');
-    const sidebar = document.querySelector('.mobile-sidebar');
-    const overlay = document.querySelector('.mobile-sidebar-overlay');
-    function openDrawer() { sidebar?.classList.add('active'); overlay?.classList.add('active'); }
-    function closeDrawer() { sidebar?.classList.remove('active'); overlay?.classList.remove('active'); }
-    if (openMobile) openMobile.addEventListener('click', openDrawer);
-    if (closeMobile) closeMobile.addEventListener('click', closeDrawer);
-    if (overlay) overlay.addEventListener('click', closeDrawer);
-
-    // FAQ TOGGLE
-    document.querySelectorAll('.faq-question').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const answer = btn.nextElementSibling;
-        const icon = btn.querySelector('i');
-        if (answer) answer.classList.toggle('hidden');
-        if (icon) { icon.classList.toggle('fa-plus'); icon.classList.toggle('fa-minus'); }
-      });
-    });
-
-    // SCROLL ANIMATIONS
-    const scrollEls = document.querySelectorAll('.scroll-animate');
-    const handleScroll = () => { scrollEls.forEach(el => { if (el.getBoundingClientRect().top <= window.innerHeight * 0.85) el.classList.add('animated'); }); };
-    window.addEventListener('scroll', handleScroll);
-    setTimeout(handleScroll, 500);
-
-    // LUCIDE ICONS
-    if (typeof lucide !== 'undefined') lucide.createIcons();
-
-    // WAITLIST FUNCTIONALITY
-    const waitlistBtn = document.getElementById('waitlistBtn');
-    const waitlistModal = document.getElementById('waitlistModal');
-    const closeWaitlist = document.getElementById('closeWaitlist');
-    const waitlistForm = document.getElementById('waitlistForm');
-    const waitlistSuccess = document.getElementById('waitlistSuccess');
-    const closeSuccessBtn = document.getElementById('closeSuccessBtn');
-    const waitlistMobileBtn = document.querySelector('.waitlist-mobile-btn');
-    const formContainer = document.getElementById('waitlistFormContainer');
-
-    // Auto-fill referral from URL
-    function autoFillReferralFromURL() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const refCode = urlParams.get('ref');
-      if (refCode) {
-        const referralInput = document.getElementById('referralCode');
-        if (referralInput) referralInput.value = refCode.toUpperCase();
-        console.log('Auto-filled referral code:', refCode);
-      }
-    }
-
-    // CHECK IF EMAIL ALREADY EXISTS
-    async function checkEmailExists(email) {
-      try {
-        const { data, error } = await supabaseClient
-          .from('waitlist')
-          .select('email')
-          .eq('email', email.toLowerCase())
-          .maybeSingle();
-        if (error) {
-          console.error('Error checking email:', error);
-          return false;
-        }
-        return data !== null;
-      } catch (error) {
-        console.error('Check email error:', error);
-        return false;
-      }
-    }
-
-    // Save to Supabase waitlist
-    async function saveToSupabase(name, email, phone, referralCode) {
-      try {
-        const { data, error } = await supabaseClient
-          .from('waitlist')
-          .insert([{ name, email: email.toLowerCase(), phone, referral_code_used: referralCode || null }])
-          .select();
-        if (error) throw error;
-        console.log('✅ Saved to Supabase:', data);
-        return true;
-      } catch (error) {
-        console.error('Supabase error:', error);
-        return false;
-      }
-    }
-
-    // Update referrer stats if valid code provided
-    async function updateReferrerStats(referralCode) {
-      if (!referralCode) return false;
-      try {
-        const { data: referrer, error: fetchError } = await supabaseClient
-          .from('referrers')
-          .select('*')
-          .eq('referral_code', referralCode.toUpperCase())
-          .single();
-        if (fetchError || !referrer) {
-          console.log('Referral code not found:', referralCode);
-          return false;
-        }
-        const newCount = (referrer.referral_count || 0) + 1;
-        const newEarnings = (referrer.earnings || 0) + 200;
-        await supabaseClient
-          .from('referrers')
-          .update({ referral_count: newCount, earnings: newEarnings })
-          .eq('referral_code', referralCode.toUpperCase());
-        console.log(`✅ Referrer ${referralCode} updated!`);
-        return true;
-      } catch (error) {
-        console.error('Referrer update error:', error);
-        return false;
-      }
-    }
-
-    // ===== SEND WELCOME EMAIL TO WAITLIST MEMBER (Using your template ID template_dod7ab4) =====
-    async function sendWelcomeEmailToUser(name, email) {
-      try {
-        const welcomeTemplateParams = {
-          user_name: name,
-          to_email: email,
-          current_year: new Date().getFullYear(),
-          date: new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })
-        };
-        
-        // Using your template ID: template_dod7ab4
-        await emailjs.send('service_x0bcosf', 'template_dod7ab4', welcomeTemplateParams);
-        console.log('✅ Welcome email sent to:', email);
-        return true;
-      } catch (error) {
-        console.error('❌ Welcome email failed:', error);
-        return false;
-      }
-    }
-
-    // ===== SEND EMAIL TO ADMIN =====
-    async function sendAdminEmail(name, email, phone, referralCode) {
-      try {
-        const templateParams = {
-          from_name: name,
-          from_email: email,
-          phone: phone,
-          referral_code: referralCode || 'None',
-          date: new Date().toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          }),
-          time: new Date().toLocaleTimeString('en-US')
-        };
-        
-        await emailjs.send('service_x0bcosf', 'template_humkfbk', templateParams);
-        console.log('✅ Admin email sent successfully!');
-        return true;
-      } catch (error) {
-        console.error('❌ Admin email failed:', error);
-        return false;
-      }
-    }
-
-    function openModal(e) {
-      if (e) e.preventDefault();
-      if (waitlistForm) waitlistForm.reset();
-      if (formContainer) formContainer.classList.remove('hidden');
-      if (waitlistSuccess) waitlistSuccess.classList.add('hidden');
-      if (waitlistModal) {
-        waitlistModal.classList.remove('hidden');
-        waitlistModal.classList.add('flex');
-        closeDrawer();
-        autoFillReferralFromURL();
-        setTimeout(() => document.getElementById('name')?.focus(), 100);
-      }
-    }
-
-    function closeModal() { if (waitlistModal) { waitlistModal.classList.add('hidden'); waitlistModal.classList.remove('flex'); } }
-
-    if (waitlistBtn) waitlistBtn.addEventListener('click', openModal);
-    if (waitlistMobileBtn) waitlistMobileBtn.addEventListener('click', openModal);
-    if (closeWaitlist) closeWaitlist.addEventListener('click', closeModal);
-    if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', closeModal);
-    if (waitlistModal) waitlistModal.addEventListener('click', (e) => { if (e.target === waitlistModal) closeModal(); });
-
-    // Initialize EmailJS
     emailjs.init("kStvIXBSAp4wltPWq");
 
-    // FORM SUBMIT HANDLER
-    if (waitlistForm) {
-      waitlistForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const name = document.getElementById('name')?.value.trim();
-        const email = document.getElementById('email')?.value.trim().toLowerCase();
-        const phone = document.getElementById('phone')?.value.trim();
-        const referralCode = document.getElementById('referralCode')?.value.trim().toUpperCase();
+    // Preloader
+    document.addEventListener('DOMContentLoaded', () => {
+      const preloader = document.getElementById('preloader');
+      const main = document.getElementById('main-content');
+      setTimeout(() => {
+        preloader.classList.add('fade-out');
+        setTimeout(() => { main.classList.remove('hidden-init'); main.classList.add('show'); setTimeout(() => preloader.remove(), 500); }, 300);
+      }, 2600);
+    });
 
-        if (!name || !email || !phone) { 
-          alert('Please fill in all fields'); 
-          return; 
-        }
-        
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) { 
-          alert('Please enter a valid email address'); 
-          return; 
-        }
-
-        const submitBtn = waitlistForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Joining...';
-        submitBtn.disabled = true;
-
-        try {
-          // CHECK IF EMAIL ALREADY EXISTS
-          const emailExists = await checkEmailExists(email);
-          
-          if (emailExists) {
-            alert('❌ This email is already on our waitlist!');
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-            return;
-          }
-          
-          // Save to Supabase
-          const saved = await saveToSupabase(name, email, phone, referralCode);
-          
-          if (!saved) {
-            throw new Error('Failed to save to database');
-          }
-          
-          // Update referrer stats if code provided
-          if (referralCode) await updateReferrerStats(referralCode);
-          
-          // Backup to localStorage
-          localStorage.setItem('optob_waitlist', JSON.stringify({ name, email, phone, referralCode, date: new Date().toISOString() }));
-          
-          // ===== SEND WELCOME EMAIL TO USER (Using your template template_dod7ab4) =====
-          await sendWelcomeEmailToUser(name, email);
-          
-          // ===== SEND EMAIL TO ADMIN =====
-          await sendAdminEmail(name, email, phone, referralCode);
-          
-          console.log('✅ Both welcome and admin emails sent successfully!');
-          
-          formContainer.classList.add('hidden');
-          waitlistSuccess.classList.remove('hidden');
-          
-        } catch(error) {
-          console.error('Error:', error);
-          alert('Thank you for joining! You\'ve been added to our waitlist.');
-          formContainer.classList.add('hidden');
-          waitlistSuccess.classList.remove('hidden');
-        } finally {
-          submitBtn.innerHTML = originalText;
-          submitBtn.disabled = false;
+    // INTERSECTION OBSERVER for slide-in animations (left, right, up)
+    const slideElements = document.querySelectorAll('.slide-left, .slide-right, .slide-up');
+    const observerOptions = { threshold: 0.2, rootMargin: "0px 0px -20px 0px" };
+    const slideObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animated');
+          slideObserver.unobserve(entry.target);
         }
       });
-    }
+    }, observerOptions);
+    slideElements.forEach(el => slideObserver.observe(el));
 
-    autoFillReferralFromURL();
-    console.log('=== WAITLIST READY ===');
-    console.log('📧 Welcome email will be sent to users using template: template_dod7ab4');
-    console.log('📧 Admin notification will be sent using template: template_humkfbk');
+    // Waitlist logic
+    const modal = document.getElementById('waitlistModal');
+    const formContainer = document.getElementById('waitlistFormContainer');
+    const successDiv = document.getElementById('waitlistSuccess');
+    const closeModalBtn = document.getElementById('closeWaitlist');
+    const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+    const waitlistForm = document.getElementById('waitlistForm');
+    const openModalBtns = [document.getElementById('navWaitlistBtn'), document.getElementById('heroWaitlistBtn')].filter(Boolean);
+    function openModal(e) { if(e) e.preventDefault(); if(modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); if(formContainer) formContainer.classList.remove('hidden'); if(successDiv) successDiv.classList.add('hidden'); if(waitlistForm) waitlistForm.reset(); autoFillReferral(); } }
+    function closeModalFunc() { modal.classList.add('hidden'); modal.classList.remove('flex'); }
+    openModalBtns.forEach(btn => btn?.addEventListener('click', openModal));
+    if(closeModalBtn) closeModalBtn.addEventListener('click', closeModalFunc);
+    if(closeSuccessBtn) closeSuccessBtn.addEventListener('click', closeModalFunc);
+    modal?.addEventListener('click', (e) => { if(e.target === modal) closeModalFunc(); });
+    function autoFillReferral() { const urlRef = new URLSearchParams(window.location.search).get('ref'); if(urlRef && document.getElementById('referralCode')) document.getElementById('referralCode').value = urlRef.toUpperCase(); }
+
+    async function checkEmailExists(email) { const { data } = await supabaseClient.from('waitlist').select('email').eq('email', email.toLowerCase()).maybeSingle(); return !!data; }
+    async function saveToSupabase(name, email, phone, ref) { return await supabaseClient.from('waitlist').insert([{ name, email: email.toLowerCase(), phone, referral_code_used: ref || null }]); }
+    async function updateReferrerStats(referralCode) { if(!referralCode) return; try { const { data: refe } = await supabaseClient.from('referrers').select('*').eq('referral_code', referralCode.toUpperCase()).single(); if(refe) await supabaseClient.from('referrers').update({ referral_count: (refe.referral_count||0)+1, earnings: (refe.earnings||0)+200 }).eq('referral_code', referralCode.toUpperCase()); } catch(e){} }
+    async function sendWelcomeEmail(name, email) { try { await emailjs.send('service_x0bcosf', 'template_dod7ab4', { user_name: name, to_email: email, current_year: new Date().getFullYear(), date: new Date().toLocaleDateString() }); } catch(e){} }
+    async function sendAdminEmail(name, email, phone, ref) { try { await emailjs.send('service_x0bcosf', 'template_humkfbk', { from_name: name, from_email: email, phone, referral_code: ref||'None', date: new Date().toLocaleString() }); } catch(e){} }
+
+    if(waitlistForm) waitlistForm.addEventListener('submit', async (e) => {
+      e.preventDefault(); const name = document.getElementById('name').value.trim(), email = document.getElementById('email').value.trim().toLowerCase(), phone = document.getElementById('phone').value.trim(), referralCode = document.getElementById('referralCode').value.trim().toUpperCase();
+      if(!name || !email || !phone) return alert('All fields required');
+      const exists = await checkEmailExists(email);
+      if(exists) return alert('Email already on waitlist');
+      const { error } = await saveToSupabase(name, email, phone, referralCode);
+      if(!error) { if(referralCode) await updateReferrerStats(referralCode); await sendWelcomeEmail(name, email); await sendAdminEmail(name, email, phone, referralCode); formContainer.classList.add('hidden'); successDiv.classList.remove('hidden'); }
+      else { alert("Thanks! You've been added to the waitlist."); formContainer.classList.add('hidden'); successDiv.classList.remove('hidden'); }
+    });
+    autoFillReferral();
+
+    // FAQ toggle
+    document.querySelectorAll('.faq-q').forEach(btn => { btn.addEventListener('click', () => { const ans = btn.nextElementSibling; const icon = btn.querySelector('i'); ans.classList.toggle('hidden'); icon.classList.toggle('fa-plus'); icon.classList.toggle('fa-minus'); }); });
+    lucide.createIcons();
   </script>
+  <style>.animate-float{animation:float 3s ease-in-out infinite}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}</style>
 </body>
 </html>
