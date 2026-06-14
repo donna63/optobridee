@@ -49,7 +49,7 @@
 <body class="bg-white">
 
     <!-- Header -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-blue-950 border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 lg:h-20">
                 <!-- Logo -->
@@ -58,21 +58,22 @@
                         <img src="images/image-removebg-preview (26).png" class="w-10" alt="logo">
                         <!-- <i class="fas fa-car text-white text-sm"></i> -->
                     </div>
-                    <span class="text-xl font-semibold text-gray-900">Optob Ride</span>
+                    
+                    <span class="text-xl font-semibold text-gray-300">Optob Ride</span>
                 </a>
 
                 <!-- Desktop Navigation -->
                 <nav class="hidden lg:flex items-center gap-8">
-                    <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Company</a>
-                    <a href="#blog" class="text-sm text-gray-600 hover:text-gray-900">Blog</a>
+                    <a href="driverlanding.html" class="text-sm text-gray-600 hover:text-gray-900">Drive</a>
+                    <a href="courierlanding.html" class="text-sm text-gray-600 hover:text-gray-900">Courier</a>
                     <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Contact us</a>
                 </nav>
 
                 <!-- Desktop Auth -->
-                <div class="hidden lg:flex items-center gap-4">
+                <!-- <div class="hidden lg:flex items-center gap-4">
                     <a href="uselogin.html" class="text-sm text-gray-600 hover:text-gray-900">Log in</a>
                     <a href="#" class="bg-gray-900 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-800">Sign Up</a>
-                </div>
+                </div> -->
 
                 <!-- Mobile Menu Button -->
                 <button id="mobile-menu-btn" class="lg:hidden relative z-50 w-8 h-8 flex flex-col justify-center items-center gap-1.5">
@@ -80,17 +81,18 @@
                     <span class="menu-line line-2 w-6 h-0.5 bg-gray-900 block"></span>
                     <span class="menu-line line-3 w-6 h-0.5 bg-gray-900 block"></span>
                 </button>
+                
             </div>
         </div>
 
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="lg:hidden fixed inset-0 top-16 bg-white z-40 transform translate-x-full opacity-0 pointer-events-none">
-            <div class="flex flex-col p-6 gap-4">
-                <a href="#" class="text-lg text-gray-900 py-2 border-b border-gray-100">Company</a>
-                <a href="#blog" class="text-lg text-gray-900 py-2 border-b border-gray-100">Blog</a>
+            <div class="flex flex-col p-6 gap-4 text-center">
+                <a href="driverlanding.html" class="text-lg text-gray-900 py-2 border-b border-gray-100">Drive</a>
+                <a href="courierlanding.html" class="text-lg text-gray-900 py-2 border-b border-gray-100">Courier</a>
                 <a href="#" class="text-lg text-gray-900 py-2 border-b border-gray-100">Contact us</a>
-                <a href="uselogin.html" class="text-lg text-gray-900 py-2 border-b border-gray-100">Log in</a>
-                <a href="index.html" class="bg-gray-900 text-white px-5 py-3 rounded-lg text-center font-medium mt-4">Sign Up</a>
+                <!-- <a href="uselogin.html" class="text-lg text-gray-900 py-2 border-b border-gray-100">Log in</a>
+                <a href="index.html" class="bg-gray-900 text-white px-5 py-3 rounded-lg text-center font-medium mt-4">Sign Up</a> -->
             </div>
         </div>
     </header>
@@ -502,10 +504,10 @@
                 <div>
                     <h4 class="font-semibold mb-4">Overall</h4>
                     <ul class="space-y-3 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white transition-colors">Homepage</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">About us</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="index.html" class="hover:text-white transition-colors">Homepage</a></li>
+                        <li><a href="about.html" class="hover:text-white transition-colors">About us</a></li>
+                        <!-- <li><a href="#" class="hover:text-white transition-colors">Blog</a></li> -->
+                        <!-- <li><a href="#" class="hover:text-white transition-colors">Careers</a></li> -->
                     </ul>
                 </div>
                 
@@ -514,9 +516,9 @@
                     <h4 class="font-semibold mb-4">Services</h4>
                     <ul class="space-y-3 text-sm text-gray-400">
                         <li><a href="#" class="hover:text-white transition-colors">Ride</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Drive</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Delivery</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Pick Ups</a></li>
+                        <li><a href="driverlanding.html" class="hover:text-white transition-colors">Drive</a></li>
+                        <li><a href="courierlanding.html" class="hover:text-white transition-colors">Courier</a></li>
+                        <!-- <li><a href="#" class="hover:text-white transition-colors">Pick Ups</a></li> -->
                     </ul>
                 </div>
                 
@@ -547,15 +549,15 @@
                     <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
+                    <!-- <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
                         <i class="fab fa-x-twitter"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
+                    </a> -->
+                    <!-- <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
                         <i class="fab fa-youtube"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
+                    </a> -->
+                    <!-- <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
                         <i class="fab fa-linkedin-in"></i>
-                    </a>
+                    </a> -->
                     <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
                         <i class="fab fa-instagram"></i>
                     </a>
@@ -563,11 +565,11 @@
                 
                 <p class="text-sm text-gray-500">© 2025 Optob Ride. All Rights Reserved</p>
                 
-                <div class="flex gap-6 text-sm text-gray-400">
+                <!-- <div class="flex gap-6 text-sm text-gray-400">
                     <a href="#" class="hover:text-white transition-colors">Privacy</a>
                     <a href="#" class="hover:text-white transition-colors">Accessibility</a>
                     <a href="#" class="hover:text-white transition-colors">Terms</a>
-                </div>
+                </div> -->
             </div>
         </div>
         
@@ -577,6 +579,21 @@
             <i class="fas fa-arrow-up"></i>
         </button>
     </footer>
+
+
+    <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a2e73c3d092871d426d259f/1jr2n8dp5';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
 
     <script>
         // Mobile Menu Toggle

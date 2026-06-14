@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optob Ride - Become a Courier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        :root {
+            --primary-orange: #f6a94c;
+            --cream-bg: rgb(248, 208, 135);
+            --dark-navy: #0f0f23;
+        }
+        
+        .bg-cream {
+            background-color: rgb(248, 208, 135);
+        }
+        
+        .text-orange-brand {
+            color: #f6a94c;
+        }
+        
+        .bg-orange-brand {
+            background-color: #f6a94c;
+        }
+        
+        .hero-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1556740758-90de374c12ad?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .form-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+        }
+        
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+        }
+        
+        .faq-answer.active {
+            max-height: 500px;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            color: #9ca3af;
+        }
+        
+        .phone-mockup {
+            filter: drop-shadow(0 25px 50px rgba(0,0,0,0.15));
+        }
+        
+        .btn-primary {
+            background-color: #0f0f23;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(8, 8, 30, 0.3);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .benefit-card {
+            transition: all 0.3s ease;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .requirement-card {
+            transition: all 0.3s ease;
+        }
+        
+        .requirement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-text {
+                font-size: 2.5rem;
+                line-height: 1.2;
+            }
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-transparent transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10  rounded-full flex items-center justify-center">
+                        <a href="index.html">
+                            <img src="images/image-removebg-preview (26).png" class="w-10" alt="logo">
+                        </a>
+                        <!-- <i class="fas fa-bolt text-orange-500 text-xl"></i> -->
+                    </div>
+                    <span class="text-white text-xl font-bold">Optob Ride</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#requirements" class="nav-link text-white text-sm font-medium">Requirements</a>
+                    <a href="#how-it-works" class="nav-link text-white text-sm font-medium">How it works</a>
+                    <a href="#faq" class="nav-link text-white text-sm font-medium">FAQ</a>
+                    <!-- <a href="#" class="text-white text-sm font-medium hover:text-orange-300 transition">Log in</a>
+                    <a href="#register" class="bg-white text-gray-900 px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-gray-100 transition">
+                        Sign Up
+                    </a> -->
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden text-white p-2">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-0 z-50 bg-white md:hidden">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10  rounded-full flex items-center justify-center">
+                        <a href="index.html">
+                            <img src="images/image-removebg-preview (26).png" class="w-10" alt="logo">
+                        </a>
+                        <!-- <i class="fas fa-bolt text-white text-xl"></i> -->
+                    </div>
+                    <span class="text-gray-900 text-xl font-bold">Optob Ride</span>
+                </div>
+                <button id="close-menu" class="text-gray-900 p-2">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <div class="flex flex-col gap-6 text-center">
+                <a href="#requirements" class="text-gray-900 text-lg font-medium py-2 border-b border-gray-100">Requirements</a>
+                <a href="#how-it-works" class="text-gray-900 text-lg font-medium py-2 border-b border-gray-100">How it works</a>
+                <a href="#faq" class="text-gray-900 text-lg font-medium py-2 border-b border-gray-100">FAQ</a>
+                <!-- <a href="#" class="text-gray-900 text-lg font-medium py-2 border-b border-gray-100">Log in</a>
+                <a href="#register" class="bg-orange-500 text-white text-center py-4 rounded-lg font-semibold mt-4">Sign Up</a> -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center relative pt-20" id="register">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Content -->
+                <div class="text-white scroll-reveal">
+                    <h1 class="hero-text text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        Ready to<br>
+                        Deliver with<br>
+                        <span class="text-orange-400">Optob Ride!</span>
+                    </h1>
+                    <p class="text-xl text-gray-200 mb-8 max-w-lg">
+                        Make Money Delivering Orders in Nigeria
+                    </p>
+                </div>
+
+                <!-- Registration Form -->
+                <!-- <div class="scroll-reveal" style="transition-delay: 0.2s;">
+                    <div class="form-container rounded-2xl p-6 sm:p-8 shadow-2xl max-w-md ml-auto">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Become an Optob Courier</h2>
+                        
+                        <form class="space-y-5 mt-6">
+                           
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" placeholder="Enter email address" 
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                            </div>
+
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone number</label>
+                                <div class="flex gap-3">
+                                    <div class="flex items-center px-3 py-3 border border-gray-200 rounded-lg bg-gray-50 w-28">
+                                        <span class="text-green-600 mr-2">🇳🇬</span>
+                                        <span class="text-gray-700 font-medium">+234</span>
+                                        <i class="fas fa-chevron-down ml-2 text-gray-400 text-xs"></i>
+                                    </div>
+                                    <input type="tel" placeholder="Mobile number" 
+                                        class="flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition">
+                                </div>
+                            </div>
+
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                                <div class="relative">
+                                    <select class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition appearance-none bg-white">
+                                        <option>Lagos</option>
+                                        <option>Abuja</option>
+                                        <option>Port Harcourt</option>
+                                        <option>Ibadan</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+                                <input type="checkbox" id="terms" class="mt-1 w-5 h-5 rounded border-gray-300 text-orange-500 focus:ring-orange-500">
+                                <label for="terms" class="text-xs text-gray-600 leading-relaxed">
+                                    By registering, you agree to our <a href="#" class="text-orange-500 hover:underline">Terms of Service</a> and <a href="#" class="text-orange-500 hover:underline">Privacy policy</a>, commit to comply with obligations under the Nigerian legislation and provide only legal services and content on the Optob Ride Platform.
+                                </label>
+                            </div>
+
+                            <button type="submit" class="w-full btn-primary text-white py-4 rounded-lg font-semibold flex items-center justify-center gap-2">
+                                Register as a Courier
+                                <i class="fas fa-motorcycle"></i>
+                            </button>
+
+                            <p class="text-center text-sm text-gray-600">
+                                Already have an account? <a href="#" class="text-orange-500 font-semibold hover:underline">Log In</a>
+                            </p>
+                        </form>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Courier Benefits Section -->
+    <section class="bg-cream py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-gray-900 mb-12 scroll-reveal">Courier Benefits</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Benefit 1 -->
+                <div class="benefit-card scroll-reveal">
+                    <div class="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-money-bill-wave text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">1. Weekly payouts</h3>
+                    <p class="text-gray-700">Receive your earnings at the end of each week, with no monthly fees.</p>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="benefit-card scroll-reveal" style="transition-delay: 0.1s;">
+                    <div class="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-clock text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">2. Flexible schedule</h3>
+                    <p class="text-gray-700">Choose when and how often to earn money delivering orders.</p>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="benefit-card scroll-reveal" style="transition-delay: 0.2s;">
+                    <div class="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-motorcycle text-white text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">3. Deliver as much as you can</h3>
+                    <p class="text-gray-700">Want to make more money? You decide. Boost your earnings</p>
+                </div>
+            </div>
+
+            <a href="#register" class="inline-block mt-10 text-gray-900 font-semibold border-b-2 border-gray-900 pb-1 hover:text-orange-600 hover:border-orange-600 transition scroll-reveal">
+                Apply to Deliver
+            </a>
+        </div>
+    </section>
+
+    <!-- Boost Your Earnings Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Image -->
+                <div class="scroll-reveal">
+                    <div class="relative rounded-3xl overflow-hidden shadow-2xl">
+                        <img src="images/6214be9aca4c666f706ba1c7b2151dd3b38af250.jpg" 
+                            alt="Driver" class="w-full h-[500px] object-cover">
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="scroll-reveal">
+                    <h2 class="text-4xl font-bold text-gray-900 mb-8">Boost your earnings</h2>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">1. Earn more when it's busy</h3>
+                            <p class="text-gray-600">Maximise your earnings with our dynamic pricing model, so you get paid more during busy times.</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">2. Earn more tips</h3>
+                            <p class="text-gray-600">Customers who value your service can now tip you directly through the app!</p>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">3. Get paid more with bonuses</h3>
+                            <p class="text-gray-600">Earn more money for completing deliveries on weekends, during late hours or on bad weather days.</p>
+                        </div>
+                    </div>
+
+                    <a href="#register" class="inline-block mt-10 text-gray-900 font-semibold border-b-2 border-gray-900 pb-1 hover:text-orange-600 hover:border-orange-600 transition">
+                        Apply to Deliver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Requirements Section -->
+    <section class="bg-cream py-20" id="requirements">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4 scroll-reveal">Optob courier requirements</h2>
+            <p class="text-gray-700 mb-12 max-w-2xl mx-auto scroll-reveal">
+                Whether you want to deliver for a few hours occasionally or want to earn money more frequently, with Optob you can fix deliveries around your schedule.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Requirement 1 -->
+                <div class="requirement-card bg-white rounded-xl p-8 shadow-sm scroll-reveal">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user text-gray-700 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Valid photo ID</h3>
+                    <p class="text-gray-600 text-sm">Proving the minimum age requirement</p>
+                </div>
+
+                <!-- Requirement 2 -->
+                <div class="requirement-card bg-white rounded-xl p-8 shadow-sm scroll-reveal" style="transition-delay: 0.1s;">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-mobile-alt text-gray-700 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Smartphone</h3>
+                    <p class="text-gray-600 text-sm">Android or iOS, with a Registered number</p>
+                </div>
+
+                <!-- Requirement 3 -->
+                <div class="requirement-card bg-white rounded-xl p-8 shadow-sm scroll-reveal" style="transition-delay: 0.2s;">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bicycle text-gray-700 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Scooter, bike or car</h3>
+                    <p class="text-gray-600 text-sm">With a valid licence and insurance</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-20 bg-white" id="how-it-works">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Content -->
+                <div class="scroll-reveal">
+                    <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                        How the <span class="text-orange-500">Optob Courier App</span> works
+                    </h2>
+                    <p class="text-gray-600 mb-10">
+                        Our app is designed to help couriers receive, deliver and manage orders easily and effectively.
+                    </p>
+
+                    <div class="space-y-8">
+                        <div class="flex gap-4">
+                            <div class="step-number w-12 h-12 rounded-lg flex items-center justify-center text-xl font-bold flex-shrink-0">1</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Receive orders</h3>
+                                <p class="text-gray-600 text-sm mt-1">View incoming orders, check their details, and get going.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="step-number w-12 h-12 rounded-lg flex items-center justify-center text-xl font-bold flex-shrink-0">2</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Pick up the order</h3>
+                                <p class="text-gray-600 text-sm mt-1">Collect the order from the restaurant or store.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="step-number w-12 h-12 rounded-lg flex items-center justify-center text-xl font-bold flex-shrink-0">3</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Deliver</h3>
+                                <p class="text-gray-600 text-sm mt-1">Head to the delivery address as quickly and safely as possible.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="step-number w-12 h-12 rounded-lg flex items-center justify-center text-xl font-bold flex-shrink-0">4</div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Track your earnings</h3>
+                                <p class="text-gray-600 text-sm mt-1">Track your progress in real-time and view your earnings easily.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone Mockup -->
+                <div class="flex justify-center scroll-reveal">
+                    <div class="phone-mockup relative">
+                        <img src="images/88eab1b45149258657bef327392c3b1f48333c32.png" 
+                            alt="App Screenshot" class="rounded-[3rem] shadow-2xl w-72 sm:w-80">
+                        <!-- App UI Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-b from-orange-400/20 to-transparent rounded-[3rem] pointer-events-none"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="bg-cream py-20" id="faq">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12 scroll-reveal">
+                Frequently asked questions from couriers
+            </h2>
+
+            <div class="space-y-4">
+                <!-- FAQ 1 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm scroll-reveal">
+                    <button class="faq-toggle w-full px-6 py-5 flex justify-between items-center text-left hover:bg-gray-50 transition" data-faq="1">
+                        <span class="font-medium text-gray-900">How do I get paid?</span>
+                        <i class="fas fa-chevron-up text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer active px-6 pb-5" id="faq-1">
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Our payment cycle runs from Monday 00:00 to the following Sunday at 23:59. If you're due a pay-out, we'll send it to you on a weekly basis — no need to wait until the end of the month.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm scroll-reveal">
+                    <button class="faq-toggle w-full px-6 py-5 flex justify-between items-center text-left hover:bg-gray-50 transition" data-faq="2">
+                        <span class="font-medium text-gray-900">How can I find out my total earnings?</span>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer px-6" id="faq-2">
+                        <p class="text-gray-600 text-sm leading-relaxed pt-2 pb-5">
+                            You can view your total earnings in the "Earnings" section of the app. It shows your daily, weekly, and monthly earnings with detailed breakdowns.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm scroll-reveal">
+                    <button class="faq-toggle w-full px-6 py-5 flex justify-between items-center text-left hover:bg-gray-50 transition" data-faq="3">
+                        <span class="font-medium text-gray-900">Will I deliver on a schedule, or can I choose my hours?</span>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer px-6" id="faq-3">
+                        <p class="text-gray-600 text-sm leading-relaxed pt-2 pb-5">
+                            You have complete flexibility. You can choose when and how long you want to work. Simply go online in the app when you're ready to start accepting orders.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm scroll-reveal">
+                    <button class="faq-toggle w-full px-6 py-5 flex justify-between items-center text-left hover:bg-gray-50 transition" data-faq="4">
+                        <span class="font-medium text-gray-900">Do I need a smartphone to deliver with Optob Ride?</span>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer px-6" id="faq-4">
+                        <p class="text-gray-600 text-sm leading-relaxed pt-2 pb-5">
+                            Yes, you'll need an Android or iOS smartphone to run the Optob Courier app and receive delivery requests.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm scroll-reveal">
+                    <button class="faq-toggle w-full px-6 py-5 flex justify-between items-center text-left hover:bg-gray-50 transition" data-faq="5">
+                        <span class="font-medium text-gray-900">What are the requirements to sign up as a Courier?</span>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer px-6" id="faq-5">
+                        <p class="text-gray-600 text-sm leading-relaxed pt-2 pb-5">
+                            You need to be at least 18 years old, have a valid photo ID, a smartphone, and a delivery vehicle (scooter, bike, or car) with valid license and insurance.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FAQ 6 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-sm scroll-reveal">
+                    <button class="faq-toggle w-full px-6 py-5 flex justify-between items-center text-left hover:bg-gray-50 transition" data-faq="6">
+                        <span class="font-medium text-gray-900">Are there limits to my deliveries per day?</span>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-answer px-6" id="faq-6">
+                        <p class="text-gray-600 text-sm leading-relaxed pt-2 pb-5">
+                            No, there are no limits. You can complete as many deliveries as you want each day based on your availability and market demand.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="bg-dark-navy py-20 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('images/6214be9aca4c666f706ba1c7b2151dd3b38af250.jpg')] opacity-10 bg-cover bg-center"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-black scroll-reveal">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                        Be your own boss. Start delivery and earning!
+                    </h2>
+                    <p class="text-gray-900 text-lg mb-8">
+                        It takes just 1 minute to submit your information.
+                    </p>
+                    <a href="#register" class="inline-block bg-black text-gray-200 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition">
+                        Apply to Deliver
+                    </a>
+                </div>
+                
+                <div class="flex justify-center scroll-reveal">
+                    <div class="relative">
+                        <img src="images/image-removebg-preview (23).png" 
+                            alt="App" class="rounded-3xl shadow-2xl w-64 transform rotate-12">
+                        <img src="images/88eab1b45149258657bef327392c3b1f48333c32.png" 
+                            alt="App" class="rounded-3xl shadow-2xl w-64 absolute -top-10 -right-10 transform -rotate-6 hidden sm:block">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <!-- Logo -->
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10  rounded-full flex items-center justify-center">
+                            <img src="images/image-removebg-preview (26).png" class="w-10" alt="logo">
+                            <!-- <i class="fas fa-bolt text-orange-500 text-xl"></i> -->
+                        </div>
+                        <span class="text-xl font-bold">Optob Ride</span>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div>
+                    <h4 class="font-semibold mb-4">Overall</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition">Homepage</a></li>
+                        <li><a href="about.html" class="hover:text-white transition">About us</a></li>
+                        <!-- <li><a href="#" class="hover:text-white transition">Blog</a></li> -->
+                        <!-- <li><a href="#" class="hover:text-white transition">Careers</a></li> -->
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-4">Services</h4>
+                    <ul class="space-y-3 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Ride</a></li>
+                        <li><a href="driverlanding.html" class="hover:text-white transition">Drive</a></li>
+                        <li><a href="courierlanding.html" class="hover:text-white transition">Courier</a></li>
+                        <!-- <li><a href="#" class="hover:text-white transition">Pick Ups</a></li> -->
+                    </ul>
+                </div>
+
+                <!-- App Store Buttons -->
+                <div class="space-y-4">
+                    <a href="#" class="flex items-center bg-white text-black px-4 py-3 rounded-xl hover:scale-105 transition w-full sm:w-auto">
+                        <i class="fab fa-apple text-2xl mr-3"></i>
+                        <div class="text-left">
+                            <p class="text-xs">Download on the</p>
+                            <p class="font-semibold">App Store</p>
+                        </div>
+                    </a>
+                    <a href="#" class="flex items-center bg-white text-black px-4 py-3 rounded-xl hover:scale-105 transition w-full sm:w-auto">
+                        <i class="fab fa-google-play text-2xl mr-3"></i>
+                        <div class="text-left">
+                            <p class="text-xs">GET IT ON</p>
+                            <p class="font-semibold">Google Play</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bottom -->
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex gap-6 text-gray-400">
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                    <!-- <a href="#" class="hover:text-white transition"><i class="fab fa-x-twitter"></i></a> -->
+                    <!-- <a href="#" class="hover:text-white transition"><i class="fab fa-youtube"></i></a> -->
+                    <!-- <a href="#" class="hover:text-white transition"><i class="fab fa-linkedin-in"></i></a> -->
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                </div>
+                
+                <p class="text-gray-500 text-sm">© 2025 Optob Ride. All Rights Reserved</p>
+                
+                <!-- <div class="flex gap-6 text-sm text-gray-400">
+                    <a href="#" class="hover:text-white transition">Privacy</a>
+                    <a href="#" class="hover:text-white transition">Accessibility</a>
+                    <a href="#" class="hover:text-white transition">Terms</a>
+                </div> -->
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" class="fixed bottom-6 right-6 bg-white text-black w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 z-40">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+
+    <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a2e73c3d092871d426d259f/1jr2n8dp5';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navbar = document.getElementById('navbar');
+
+        function openMobileMenu() {
+            mobileMenu.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+        closeMenuBtn.addEventListener('click', closeMobileMenu);
+
+        // Close menu when clicking links
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-black/90', 'backdrop-blur-md');
+            } else {
+                navbar.classList.remove('bg-black/90', 'backdrop-blur-md');
+            }
+
+            // Back to top button
+            const backToTop = document.getElementById('back-to-top');
+            if (window.scrollY > 500) {
+                backToTop.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                backToTop.classList.add('opacity-0', 'pointer-events-none');
+            }
+        });
+
+        // Back to top functionality
+        document.getElementById('back-to-top').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // FAQ Toggle
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const faqId = button.getAttribute('data-faq');
+                const answer = document.getElementById(`faq-${faqId}`);
+                const icon = button.querySelector('i');
+                const isOpen = answer.classList.contains('active');
+
+                // Close all
+                document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('active'));
+                document.querySelectorAll('.faq-toggle i').forEach(i => i.classList.replace('fa-chevron-up', 'fa-chevron-down'));
+
+                // Open clicked if it was closed
+                if (!isOpen) {
+                    answer.classList.add('active');
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                }
+            });
+        });
+
+        // Scroll Reveal Animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Form submission
+        document.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const terms = document.getElementById('terms');
+            if (!terms.checked) {
+                alert('Please agree to the Terms of Service and Privacy Policy');
+                return;
+            }
+            alert('Application submitted successfully! We will contact you soon.');
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
