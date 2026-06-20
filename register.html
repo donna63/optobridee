@@ -51,13 +51,14 @@
         </form>
         <p class="text-center text-sm text-gray-500 mt-4">
           Already have an account? 
-          <a href="#" class="text-orange-500 font-semibold hover:underline">Login here →</a>
+          <a href="login.html" class="text-orange-500 font-semibold hover:underline">Login here →</a>
         </p>
       </div>
     </div>
 
     <div id="successMessage" class="hidden mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-center"></div>
     <div id="errorMessage" class="hidden mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-center"></div>
+    <div id="debugMessage" class="hidden mt-4 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg text-center text-sm"></div>
   </div>
 
   <script>
@@ -65,40 +66,80 @@
     const SUPABASE_URL = "https://thiksscedkfmqcpatedq.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaWtzc2NlZGtmbXFjcGF0ZWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcwNDc2NzYsImV4cCI6MjA5MjYyMzY3Nn0.zI5_7tWfdoNG700HOyK4eDrCMiITD9MXyqtMTImNJKA";
     
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Initialize Supabase - using a different variable name to avoid conflict
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('✅ Supabase initialized successfully');
+
+    // Function to check if table exists and has proper structure
+    async function checkDatabaseStructure() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('referrers')
+          .select('*')
+          .limit(1);
+        
+        if (error) {
+          console.error('❌ Database structure error:', error);
+          if (error.message.includes('relation "referrers" does not exist')) {
+            showDebug('⚠️ Table "referrers" does not exist in your database. Please create it first.');
+            return false;
+          }
+          return false;
+        }
+        
+        console.log('✅ Database structure verified');
+        return true;
+      } catch (err) {
+        console.error('❌ Database check failed:', err);
+        return false;
+      }
+    }
 
     // Generate a unique referral code
     function generateReferralCode(name) {
-      // Take first 3 letters of name, make uppercase, remove special chars
       let prefix = name.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X');
       if (prefix.length < 3) prefix = prefix + 'X'.repeat(3 - prefix.length);
       
-      // Generate random 5 characters
       const random = Math.random().toString(36).substring(2, 7).toUpperCase();
       return `${prefix}${random}`;
     }
 
     // Check if referral code is unique
     async function isReferralCodeUnique(code) {
-      const { data, error } = await supabase
-        .from('referrers')
-        .select('referral_code')
-        .eq('referral_code', code)
-        .single();
-      
-      return !data; // Returns true if code doesn't exist
+      try {
+        const { data, error } = await supabaseClient
+          .from('referrers')
+          .select('referral_code')
+          .eq('referral_code', code)
+          .maybeSingle();
+        
+        return !data;
+      } catch (err) {
+        console.error('Error checking referral code:', err);
+        return false;
+      }
     }
 
     // Check if email already exists
     async function isEmailUnique(email) {
-      const { data, error } = await supabase
-        .from('referrers')
-        .select('email')
-        .eq('email', email.toLowerCase())
-        .single();
-      
-      return !data; // Returns true if email doesn't exist
+      try {
+        const { data, error } = await supabaseClient
+          .from('referrers')
+          .select('email')
+          .eq('email', email.toLowerCase())
+          .maybeSingle();
+        
+        return !data;
+      } catch (err) {
+        console.error('Error checking email:', err);
+        return false;
+      }
     }
+
+    // Check database on load
+    window.addEventListener('load', async () => {
+      await checkDatabaseStructure();
+    });
 
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -107,6 +148,10 @@
       const email = document.getElementById('email').value.trim().toLowerCase();
       const phone = document.getElementById('phone').value.trim();
       const password = document.getElementById('password').value;
+      
+      // Clear previous messages
+      document.getElementById('errorMessage').classList.add('hidden');
+      document.getElementById('successMessage').classList.add('hidden');
       
       // Validation
       if (!fullname || !email || !phone || !password) {
@@ -128,7 +173,7 @@
       // Show loading state
       const submitBtn = document.querySelector('button[type="submit"]');
       const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Checking...';
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
       submitBtn.disabled = true;
       
       try {
@@ -138,10 +183,6 @@
           showError('❌ Email already registered! Please login instead.');
           submitBtn.innerHTML = originalText;
           submitBtn.disabled = false;
-          setTimeout(() => {
-            // Optionally redirect to login page
-            // window.location.href = 'login.html';
-          }, 2000);
           return;
         }
         
@@ -149,7 +190,6 @@
         let referralCode = generateReferralCode(fullname);
         let isUnique = await isReferralCodeUnique(referralCode);
         
-        // Keep generating until unique
         let attempts = 0;
         while (!isUnique && attempts < 10) {
           referralCode = generateReferralCode(fullname + attempts);
@@ -158,33 +198,61 @@
         }
         
         if (!isUnique) {
-          // Final fallback with timestamp
           referralCode = `USER${Date.now().toString().slice(-6)}`;
         }
         
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Creating account...';
+        // Prepare user data
+        const userData = {
+          fullname: fullname,
+          email: email,
+          phone: phone,
+          password: password, // ⚠️ Remember to hash this in production!
+          referral_code: referralCode,
+          referral_count: 0,
+          earnings: 0,
+          created_at: new Date().toISOString()
+        };
+        
+        console.log('Attempting to insert user:', userData);
         
         // Insert new user into referrers table
-        const { data: newUser, error } = await supabase
+        const { data: newUser, error } = await supabaseClient
           .from('referrers')
-          .insert([{
-            fullname: fullname,
-            email: email,
-            phone: phone,
-            password: password, // Note: In production, hash this password!
-            referral_code: referralCode,
-            referral_count: 0,
-            earnings: 0
-          }])
-          .select()
-          .single();
+          .insert([userData])
+          .select();
         
         if (error) {
-          console.error('Supabase error:', error);
+          console.error('❌ Supabase insert error:', error);
+          console.error('Error details:', error.message, error.code, error.details);
           
-          // Check if it's a duplicate email error
           if (error.code === '23505') {
             showError('❌ This email is already registered! Please login.');
+          } else if (error.code === '42P01') {
+            showError('❌ Database table not found. Please contact support.');
+            showDebug(`Table "referrers" does not exist. Run this SQL in Supabase SQL Editor:
+
+CREATE TABLE referrers (
+  id BIGSERIAL PRIMARY KEY,
+  fullname TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  phone TEXT NOT NULL,
+  password TEXT NOT NULL,
+  referral_code TEXT UNIQUE NOT NULL,
+  referral_count INTEGER DEFAULT 0,
+  earnings DECIMAL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Enable Row Level Security
+ALTER TABLE referrers ENABLE ROW LEVEL SECURITY;
+
+-- Allow public inserts
+CREATE POLICY "Enable insert for everyone" ON referrers
+  FOR INSERT WITH CHECK (true);
+
+-- Allow public selects
+CREATE POLICY "Enable select for everyone" ON referrers
+  FOR SELECT USING (true);`);
           } else {
             showError('Registration error: ' + error.message);
           }
@@ -193,20 +261,28 @@
           return;
         }
         
+        console.log('✅ User registered successfully:', newUser);
+        
         // Save to localStorage
-        localStorage.setItem('optob_referrer', JSON.stringify(newUser));
-        
-        // Show success message
-        showSuccess(`✅ Registration successful!<br><br>Your referral code: <strong class="text-xl">${referralCode}</strong><br><br>Share this code with friends!<br>You earn ₦200 for each friend who joins using your code.<br><br>Redirecting to dashboard...`);
-        
-        // Redirect to dashboard after 3 seconds
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 3000);
+        if (newUser && newUser.length > 0) {
+          localStorage.setItem('optob_referrer', JSON.stringify(newUser[0]));
+          
+          // Show success message
+          showSuccess(`✅ Registration successful!<br><br>Your referral code: <strong class="text-xl">${referralCode}</strong><br><br>Share this code with friends!<br>You earn ₦200 for each friend who joins using your code.<br><br>Redirecting to dashboard...`);
+          
+          // Redirect to dashboard after 3 seconds
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 3000);
+        } else {
+          showError('Registration completed but no user data returned.');
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        }
         
       } catch (err) {
-        console.error('Unexpected error:', err);
-        showError('An unexpected error occurred. Please try again.');
+        console.error('❌ Unexpected error:', err);
+        showError('An unexpected error occurred: ' + err.message);
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
       }
@@ -218,13 +294,19 @@
       errorDiv.classList.remove('hidden');
       setTimeout(() => {
         errorDiv.classList.add('hidden');
-      }, 5000);
+      }, 8000);
     }
     
     function showSuccess(message) {
       const successDiv = document.getElementById('successMessage');
       successDiv.innerHTML = message;
       successDiv.classList.remove('hidden');
+    }
+    
+    function showDebug(message) {
+      const debugDiv = document.getElementById('debugMessage');
+      debugDiv.innerHTML = '<i class="fas fa-bug mr-2"></i> ' + message.replace(/\n/g, '<br>');
+      debugDiv.classList.remove('hidden');
     }
   </script>
 </body>
